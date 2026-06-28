@@ -499,9 +499,19 @@ function buildTabla(){
       if(!pk?.clf) return `<td><div class="pick-empty">—</div></td>`;
       const pv=calcPts(pk,res[m.id]);
       const badge=pv===4?`<span class="pb pb4">+4</span>`:pv===2?`<span class="pb pb2">+2</span>`:'';
-      const hasScores=(pk.s1!==null&&pk.s1!==undefined&&pk.s2!==null&&pk.s2!==undefined);
-      const isPen=pk.isPen===true||(hasScores&&Number(pk.s1)===Number(pk.s2));
-      const sc=hasScores?`${pk.s1} - ${pk.s2}`:(pk.score&&pk.score.match(/^\d+-\d+$/)?(pk.score.replace('-',' - ')):'');
+      // Obtener marcador desde donde esté disponible
+      const s1num = (pk.s1!==null&&pk.s1!==undefined&&pk.s1!=='')?Number(pk.s1):null;
+      const s2num = (pk.s2!==null&&pk.s2!==undefined&&pk.s2!=='')?Number(pk.s2):null;
+      const hasScores = s1num!==null&&s2num!==null&&!isNaN(s1num)&&!isNaN(s2num);
+      // Si no hay s1/s2 válidos, intentar parsear pk.score
+      let sc='';
+      if(hasScores){
+        sc=`${s1num} - ${s2num}`;
+      } else if(pk.score&&typeof pk.score==='string'){
+        const m2=pk.score.match(/^(\d+)-(\d+)$/);
+        if(m2) sc=`${m2[1]} - ${m2[2]}`;
+      }
+      const isPen=pk.isPen===true||(hasScores&&s1num===s2num);
       return `<td>
         <div class="pick-clf${isPen?' pen':''}">${pk.clf}</div>
         <div class="pick-score">${sc}</div>
