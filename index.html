@@ -128,13 +128,24 @@ main{max-width:780px;margin:0 auto;padding:1.25rem 1rem 4rem}
 .sc-pts{font-size:32px;font-family:'Bebas Neue',sans-serif;color:var(--am);line-height:1}
 .sc-lbl{font-size:9px;color:var(--dim);margin-bottom:1px}
 .sc-sub{font-size:10px;color:var(--muted)}
-.tbl-wrap{overflow-x:auto}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r);border:1px solid var(--border)}
 table{width:100%;border-collapse:collapse;font-size:12px;min-width:600px}
-thead th{padding:9px 8px;text-align:left;font-size:10px;letter-spacing:.1em;color:var(--am);text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap}
+thead th{padding:8px 10px;text-align:center;font-size:10px;font-weight:600;color:var(--muted);background:var(--card2);border-bottom:1px solid var(--border);white-space:nowrap}
+thead th.col-partido{text-align:left;position:sticky;left:0;z-index:3;background:var(--card2);min-width:155px;border-right:1px solid var(--border)}
 tbody tr{border-bottom:1px solid var(--border)}
-tbody tr:hover{background:var(--card)}
-tbody td{padding:7px 8px;color:var(--muted);vertical-align:middle}
-tbody td:first-child{color:var(--text);font-weight:500;font-size:11px;min-width:120px}
+tbody tr:hover td{background:rgba(255,255,255,.03)}
+tbody td{padding:8px 10px;vertical-align:middle;text-align:center;min-width:85px}
+tbody td.col-partido{text-align:left;position:sticky;left:0;background:var(--card);border-right:1px solid var(--border);min-width:155px;z-index:2}
+tbody tr:hover td.col-partido{background:var(--card)}
+.col-partido-inner{display:flex;align-items:center;gap:6px}
+.pnum-badge{font-size:9px;font-weight:700;color:var(--am);background:rgba(252,209,22,.1);border:1px solid rgba(252,209,22,.2);border-radius:4px;padding:1px 5px;white-space:nowrap;flex-shrink:0}
+.partido-name{font-size:11px;font-weight:600;color:var(--text);line-height:1.3}
+.partido-date{font-size:9px;color:var(--dim);margin-top:1px}
+.pick-clf{font-size:11px;font-weight:600;color:var(--am);line-height:1.3}
+.pick-clf.pen{color:#ff8090}
+.pick-score{font-size:12px;color:var(--text);font-variant-numeric:tabular-nums}
+.pick-pen{font-size:9px;color:#ff8090;margin-top:1px}
+.pick-empty{font-size:16px;color:var(--dim)}
 .pf{display:inline-block;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:500}
 .pf.w{background:rgba(252,209,22,.1);color:#ffe060;border:1px solid rgba(252,209,22,.25)}
 .pf.p{background:rgba(206,17,38,.1);color:#ff8090;border:1px solid rgba(206,17,38,.25)}
@@ -467,29 +478,39 @@ function buildTabla(){
       <div class="sc-pts">${pts[p]}</div><div class="sc-sub">${done}/16 picks</div>`;
     sg.appendChild(c);
   });
-  document.getElementById('thead').innerHTML=`<tr><th>Partido</th>${PARTS.map(p=>`<th>${p.split(' ')[0]}</th>`).join('')}</tr>`;
+  document.getElementById('thead').innerHTML=`<tr>
+    <th class="col-partido">Partido</th>
+    ${PARTS.map(p=>`<th>${p.split(' ')[0]}</th>`).join('')}
+  </tr>`;
   const tb=document.getElementById('tbody');tb.innerHTML='';
   MS.forEach(m=>{
     const tr=document.createElement('tr');
-    const lbl=`<strong>${m.eq1}</strong><br><span style="color:var(--dim);font-size:10px">vs ${m.eq2} · P${m.id}</span>`;
+    const partidoCell=`<td class="col-partido">
+      <div class="col-partido-inner">
+        <span class="pnum-badge">P${m.id}</span>
+        <div>
+          <div class="partido-name">${m.eq1} vs ${m.eq2}</div>
+          <div class="partido-date">${m.date}</div>
+        </div>
+      </div>
+    </td>`;
     const cells=PARTS.map(p=>{
       const pk=(allData[p]||{})[m.id];
-      if(!pk?.clf) return `<td><span class="pf n">—</span></td>`;
+      if(!pk?.clf) return \`<td><div class="pick-empty">—</div></td>\`;
       const pv=calcPts(pk,res[m.id]);
-      const badge=pv===4?`<span class="pb pb4">+4</span>`:pv===2?`<span class="pb pb2">+2</span>`:'';
-      // isPen: viene del script o lo calculamos si s1/s2 son válidos
+      const badge=pv===4?\`<span class="pb pb4">+4</span>\`:pv===2?\`<span class="pb pb2">+2</span>\`:'';
       const hasScores=(pk.s1!==null&&pk.s1!==undefined&&pk.s2!==null&&pk.s2!==undefined);
       const isPen=pk.isPen===true||(hasScores&&Number(pk.s1)===Number(pk.s2));
-      // Marcador: usar score si s1/s2 son nulos o inválidos
-      const sc=hasScores?`${pk.s1}-${pk.s2}`:(pk.score&&/^\d+-\d+$/.test(pk.score)?pk.score:'');
-      const clfLabel=isPen?`${pk.clf} 🥅`:pk.clf;
-      return `<td>
-        <div style="font-size:11px;font-weight:700;color:${isPen?'#ff8090':'var(--am)'};line-height:1.2">${clfLabel}</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">${sc}${isPen?' (pen)':''}</div>
+      const sc=hasScores?\`${pk.s1} - ${pk.s2}\`:(pk.score&&pk.score.match(/^\d+-\d+$/)?(pk.score.replace('-',' - ')):'');
+      return \`<td>
+        <div class="pick-clf${isPen?' pen':''}">${pk.clf}</div>
+        <div class="pick-score">${sc}</div>
+        ${isPen?'<div class="pick-pen">penales</div>':''}
         ${badge}
-      </td>`;
+      </td>\`;
     }).join('');
-    tr.innerHTML=`<td>${lbl}</td>${cells}`;tb.appendChild(tr);
+    tr.innerHTML=partidoCell+cells;
+    tb.appendChild(tr);
   });
 }
 
