@@ -211,14 +211,18 @@ tbody td:first-child{color:var(--text);font-weight:500;font-size:11px;min-width:
       <select id="psel" onchange="loadP()">
         <option value="">— Elige tu nombre —</option>
       </select>
-      <button class="save-btn" id="sbtn" onclick="save()">Guardar picks</button>
     </div>
-    <div class="sync-bar" id="sbar"></div>
     <div class="prog-wrap">
       <div class="prog-track"><div class="prog-fill" id="pfill" style="width:0%"></div></div>
       <span class="prog-lbl" id="plbl">0 / 16 completados</span>
     </div>
     <div id="mform"></div>
+    <div style="padding:1.5rem 0 2rem;text-align:center">
+      <button class="save-btn" id="sbtn" onclick="save()" style="width:100%;max-width:400px;padding:14px 24px;font-size:16px;border-radius:10px;letter-spacing:.05em">
+        💾 Guardar mis picks
+      </button>
+      <div class="sync-bar" id="sbar" style="margin-top:.75rem;justify-content:center"></div>
+    </div>
   </div>
 
   <div class="panel" id="panel-tabla">
