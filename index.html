@@ -453,9 +453,11 @@ function buildTabla(){
       if(!pk?.clf) return `<td><span class="pf n">—</span></td>`;
       const pv=calcPts(pk,res[m.id]);
       const badge=pv===4?`<span class="pb pb4">+4</span>`:pv===2?`<span class="pb pb2">+2</span>`:'';
-      const isPen=+pk.s1===+pk.s2;
-      const sc=pk.s1!==undefined?`${pk.s1}-${pk.s2}`:(pk.score||'0-0');
-      // Texto claro: equipo elegido + marcador + 🥅 si empate+penales
+      // isPen: viene del script o lo calculamos si s1/s2 son válidos
+      const hasScores=(pk.s1!==null&&pk.s1!==undefined&&pk.s2!==null&&pk.s2!==undefined);
+      const isPen=pk.isPen===true||(hasScores&&Number(pk.s1)===Number(pk.s2));
+      // Marcador: usar score si s1/s2 son nulos o inválidos
+      const sc=hasScores?`${pk.s1}-${pk.s2}`:(pk.score&&/^\d+-\d+$/.test(pk.score)?pk.score:'');
       const clfLabel=isPen?`${pk.clf} 🥅`:pk.clf;
       return `<td>
         <div style="font-size:11px;font-weight:700;color:${isPen?'#ff8090':'var(--am)'};line-height:1.2">${clfLabel}</div>
