@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polla Mundialista 2026 🏆</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #00a550;
+    --verde-oscuro: #007a3d;
+    --dorado: #c9a84c;
+    --dorado-claro: #f0d080;
+    --bg: #0a0e1a;
+    --bg-card: #131929;
+    --bg-card2: #1a2035;
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(201,168,76,0.4);
+    --text: #f0f0f0;
+    --text-muted: #7a8099;
+    --text-dim: #4a5270;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: linear-gradient(180deg, #0d1220 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 1rem 1.5rem;
+    text-align: center;
+  }
+  header .eyebrow { font-size: 11px; letter-spacing: .2em; color: var(--dorado); text-transform: uppercase; margin-bottom: 8px; }
+  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(36px, 8vw, 64px); letter-spacing: .04em; color: #fff; line-height: 1; }
+  header h1 span { color: var(--dorado); }
+  header p { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+
+  .nav {
+    display: flex; justify-content: center; gap: 4px; padding: 1rem;
+    position: sticky; top: 0; background: var(--bg); z-index: 10;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav button {
+    padding: 8px 18px; border-radius: 20px; border: 1px solid var(--border);
+    background: transparent; color: var(--text-muted); font-size: 13px;
+    font-family: 'Inter', sans-serif; cursor: pointer; transition: all .15s;
+  }
+  .nav button:hover { border-color: var(--border-hover); color: var(--text); }
+  .nav button.active { background: var(--dorado); border-color: var(--dorado); color: #0a0e1a; font-weight: 600; }
+
+  main { max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* WHO BAR */
+  .who-bar {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .who-bar label { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+  .who-bar select {
+    flex: 1; min-width: 160px; padding: 8px 12px;
+    background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text); font-size: 14px;
+    font-family: 'Inter', sans-serif; cursor: pointer;
+  }
+  .who-bar select:focus { outline: none; border-color: var(--dorado); }
+  .save-btn {
+    padding: 8px 18px; background: var(--verde); color: #fff; border: none;
+    border-radius: 6px; font-size: 13px; font-weight: 600;
+    font-family: 'Inter', sans-serif; cursor: pointer; transition: background .15s; white-space: nowrap;
+  }
+  .save-btn:hover { background: var(--verde-oscuro); }
+  .save-btn:disabled { background: var(--text-dim); cursor: not-allowed; }
+
+  /* PROGRESS */
+  .progress-wrap { margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+  .progress-track { flex: 1; height: 4px; background: var(--bg-card2); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--dorado); border-radius: 2px; transition: width .3s; }
+  .progress-label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+
+  /* DAY / MATCH */
+  .day-section { margin-bottom: 2rem; }
+  .day-title {
+    font-size: 11px; letter-spacing: .14em; color: var(--dorado);
+    text-transform: uppercase; font-weight: 600;
+    margin-bottom: .75rem; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+  }
+  .match-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; transition: border-color .15s;
+  }
+  .match-card.picked { border-color: rgba(201,168,76,0.25); }
+  .match-meta { font-size: 11px; color: var(--text-dim); margin-bottom: 10px; }
+  .teams-grid { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 6px; align-items: center; margin-bottom: 10px; }
+  .team-pick {
+    padding: 9px 8px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--bg-card2); color: var(--text-muted); font-size: 13px; font-weight: 500;
+    font-family: 'Inter', sans-serif; cursor: pointer; text-align: center;
+    line-height: 1.3; transition: all .15s;
+  }
+  .team-pick:hover { border-color: var(--border-hover); color: var(--text); }
+  .team-pick.selected { background: rgba(201,168,76,0.12); border-color: var(--dorado); color: var(--dorado-claro); }
+  .vs { text-align: center; font-size: 11px; color: var(--text-dim); font-weight: 600; }
+  .score-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .score-row label { font-size: 12px; color: var(--text-dim); }
+  .score-sel {
+    padding: 4px 8px; background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: 5px; color: var(--text); font-size: 13px; font-family: 'Inter', sans-serif; cursor: pointer;
+  }
+  .score-sep { color: var(--text-dim); font-size: 13px; }
+
+  /* TABLA */
+  .tabla-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px; }
+  .tabla-header h2 { font-size: 16px; font-weight: 500; color: var(--text); }
+  .reload-btn {
+    padding: 7px 14px; border: 1px solid var(--border); border-radius: 6px;
+    background: transparent; color: var(--text-muted); font-size: 12px;
+    font-family: 'Inter', sans-serif; cursor: pointer; transition: all .15s;
+  }
+  .reload-btn:hover { border-color: var(--border-hover); color: var(--text); }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .summary-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1rem; text-align: center;
+  }
+  .summary-card .s-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .summary-card .s-pts { font-size: 28px; font-family: 'Bebas Neue', sans-serif; color: var(--dorado); letter-spacing: .04em; }
+  .summary-card .s-picks { font-size: 11px; color: var(--text-muted); }
+
+  .tabla-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 600px; }
+  thead th {
+    padding: 10px; text-align: left; font-size: 10px; letter-spacing: .1em;
+    color: var(--dorado); text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:hover { background: var(--bg-card); }
+  tbody td { padding: 9px 10px; color: var(--text-muted); vertical-align: middle; }
+  tbody td:first-child { color: var(--text); font-weight: 500; font-size: 13px; }
+  .pick-flag {
+    display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 500;
+  }
+  .pick-flag.has { background: rgba(201,168,76,0.12); color: var(--dorado-claro); border: 1px solid rgba(201,168,76,0.25); }
+  .pick-flag.no { background: rgba(255,255,255,0.04); color: var(--text-dim); border: 1px solid var(--border); }
+  .score-badge { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+
+  /* SETUP BANNER */
+  .setup-banner {
+    background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.2);
+    border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+    font-size: 13px; color: var(--text-muted); line-height: 1.6;
+  }
+  .setup-banner strong { color: var(--dorado); }
+  .setup-banner input {
+    width: 100%; margin-top: 10px; padding: 8px 12px;
+    background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text); font-size: 13px;
+    font-family: 'Inter', sans-serif;
+  }
+  .setup-banner input:focus { outline: none; border-color: var(--dorado); }
+  .setup-banner input::placeholder { color: var(--text-dim); }
+  .config-save-btn {
+    margin-top: 8px; padding: 7px 16px; background: var(--dorado); color: #0a0e1a;
+    border: none; border-radius: 6px; font-size: 13px; font-weight: 600;
+    font-family: 'Inter', sans-serif; cursor: pointer;
+  }
+
+  /* STATUS */
+  .status-dot {
+    display: inline-block; width: 7px; height: 7px;
+    border-radius: 50%; margin-right: 6px; vertical-align: middle;
+  }
+  .status-dot.ok { background: var(--verde); }
+  .status-dot.err { background: #d0021b; }
+  .status-dot.pending { background: var(--dorado); }
+
+  /* LOADING */
+  .loading { text-align: center; padding: 2rem; color: var(--text-dim); font-size: 14px; }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 500;
+    transition: transform .25s; z-index: 100; pointer-events: none;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.success { background: var(--verde); color: #fff; }
+  #toast.error { background: #d0021b; color: #fff; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">FIFA World Cup 2026 · USA · México · Canadá</div>
+  <h1>Polla <span>Mundial</span> 2026</h1>
+  <p>16avos de final · 28 jun – 3 jul · Familia</p>
+</header>
+
+<nav class="nav">
+  <button class="active" onclick="showPanel('form', this)">Mis picks</button>
+  <button onclick="showPanel('tabla', this)">Ver todos</button>
+
+</nav>
+
+<main>
+
+  <!-- ══ PANEL: FORMULARIO ══ -->
+  <div class="panel active" id="panel-form">
+    <div class="who-bar">
+      <label>¿Quién eres?</label>
+      <select id="participant-select" onchange="loadParticipant()">
+        <option value="">— Selecciona tu nombre —</option>
+      </select>
+      <button class="save-btn" onclick="savePicks()" id="save-btn">Guardar picks</button>
+    </div>
+    <div id="sync-status" style="font-size:12px;color:var(--text-muted);margin-bottom:1rem;display:none"></div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      <span class="progress-label" id="prog-label">0 / 16 completados</span>
+    </div>
+    <div id="matches-form"></div>
+  </div>
+
+  <!-- ══ PANEL: TABLA ══ -->
+  <div class="panel" id="panel-tabla">
+    <div class="tabla-header">
+      <h2>Pronósticos de todos</h2>
+      <button class="reload-btn" onclick="loadTabla()">↻ Actualizar</button>
+    </div>
+    <div class="summary-grid" id="summary-grid"></div>
+    <div class="tabla-wrap">
+      <table>
+        <thead id="tabla-head"></thead>
+        <tbody id="tabla-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+/* ── CONFIG ─────────────────────────────────────────────── */
+const PARTICIPANTS = ['Silvia','Esteban','Mamá','Papá','Hermana','Tío','Primo'];
+
+const MATCHES = [
+  {id:1,  date:'Dom 28 jun', time:'13:00 CT', stad:'SoFi Stadium · Los Ángeles',       eq1:'Sudáfrica',      eq2:'Canadá'        },
+  {id:2,  date:'Lun 29 jun', time:'10:00 CT', stad:'Gillette Stadium · Boston',         eq1:'Alemania',       eq2:'Paraguay'      },
+  {id:3,  date:'Lun 29 jun', time:'14:00 MT', stad:'Est. BBVA · Monterrey',             eq1:'Países Bajos',   eq2:'Marruecos'     },
+  {id:4,  date:'Lun 29 jun', time:'14:00 CT', stad:'NRG Stadium · Houston',             eq1:'Brasil',         eq2:'Japón'         },
+  {id:5,  date:'Mar 30 jun', time:'14:00 ET', stad:'MetLife Stadium · Nueva Jersey',    eq1:'Francia',        eq2:'Suecia'        },
+  {id:6,  date:'Mar 30 jun', time:'14:00 CT', stad:'AT&T Stadium · Dallas',             eq1:'Costa de Marfil',eq2:'Noruega'       },
+  {id:7,  date:'Mar 30 jun', time:'14:00 MT', stad:'Est. Azteca · Ciudad de México',    eq1:'México',         eq2:'Ecuador'       },
+  {id:8,  date:'Mié 1 jul',  time:'14:00 ET', stad:'Mercedes-Benz Stadium · Atlanta',   eq1:'Inglaterra',     eq2:'RD del Congo'  },
+  {id:9,  date:'Mié 1 jul',  time:'13:00 PT', stad:"Levi's Stadium · San Francisco",   eq1:'Estados Unidos', eq2:'Bosnia-Herz.'  },
+  {id:10, date:'Mié 1 jul',  time:'13:00 PT', stad:'Lumen Field · Seattle',             eq1:'Bélgica',        eq2:'Senegal'       },
+  {id:11, date:'Jue 2 jul',  time:'15:00 ET', stad:'BMO Field · Toronto',               eq1:'Portugal',       eq2:'Croacia'       },
+  {id:12, date:'Jue 2 jul',  time:'14:00 CT', stad:'SoFi Stadium · Los Ángeles',        eq1:'España',         eq2:'Cabo Verde'    },
+  {id:13, date:'Jue 2 jul',  time:'15:00 PT', stad:'BC Place · Vancouver',              eq1:'Suiza',          eq2:'Argelia'       },
+  {id:14, date:'Vie 3 jul',  time:'14:00 ET', stad:'Hard Rock Stadium · Miami',         eq1:'Argentina',      eq2:'Austria'       },
+  {id:15, date:'Vie 3 jul',  time:'14:00 CT', stad:'Arrowhead Stadium · Kansas City',   eq1:'Colombia',       eq2:'Ghana'         },
+  {id:16, date:'Vie 3 jul',  time:'14:00 CT', stad:'AT&T Stadium · Dallas',             eq1:'Australia',      eq2:'Egipto'        },
+];
+
+/* ── STATE ──────────────────────────────────────────────── */
+let currentParticipant = null;
+let localPicks = {};   // picks del participante actual en memoria
+let allData = {};      // todos los picks cargados desde Sheets
+
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQLHPFuSe0IXnfbHMUf7FP7EOHVpz8dclJPZY7xsbQN0ZfMQH4ruE7odK5XVCH5I63Kw/exec';
+function getScriptUrl() { return SCRIPT_URL; }
+function saveScriptUrl() { showToast('URL ya está configurada ✓', 'success'); }
+
+/* ── INIT ───────────────────────────────────────────────── */
+function init() {
+  const sel = document.getElementById('participant-select');
+  PARTICIPANTS.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p; opt.textContent = p;
+    sel.appendChild(opt);
+  });
+  const saved = getScriptUrl();
+  if (saved) document.getElementById('script-url-input').value = saved;
+  buildForm();
+}
+
+/* ── BUILD FORM ─────────────────────────────────────────── */
+function buildForm() {
+  const container = document.getElementById('matches-form');
+  container.innerHTML = '';
+  const days = [...new Set(MATCHES.map(m => m.date))];
+  days.forEach(day => {
+    const sec = document.createElement('div');
+    sec.className = 'day-section';
+    sec.innerHTML = `<div class="day-title">${day}</div>`;
+    MATCHES.filter(m => m.date === day).forEach(m => sec.appendChild(buildMatchCard(m)));
+    container.appendChild(sec);
+  });
+}
+
+function buildMatchCard(m) {
+  const div = document.createElement('div');
+  div.className = 'match-card';
+  div.id = `mc-${m.id}`;
+  div.innerHTML = `
+    <div class="match-meta">Partido ${m.id} · ${m.time} · ${m.stad}</div>
+    <div class="teams-grid">
+      <button class="team-pick" id="tp-${m.id}-1" onclick="pickWinner(${m.id},1,'${m.eq1.replace(/'/g,"\\'")}')"> ${m.eq1}</button>
+      <div class="vs">VS</div>
+      <button class="team-pick" id="tp-${m.id}-2" onclick="pickWinner(${m.id},2,'${m.eq2.replace(/'/g,"\\'")}')"> ${m.eq2}</button>
+    </div>
+    <div class="score-row">
+      <label>Marcador:</label>
+      <select class="score-sel" id="sc1-${m.id}" onchange="pickScore(${m.id})">${scoreOpts()}</select>
+      <span class="score-sep">–</span>
+      <select class="score-sel" id="sc2-${m.id}" onchange="pickScore(${m.id})">${scoreOpts()}</select>
+    </div>`;
+  return div;
+}
+
+function scoreOpts() {
+  return [0,1,2,3,4,5].map(n => `<option value="${n}">${n}</option>`).join('');
+}
+
+/* ── INTERACTIONS ───────────────────────────────────────── */
+function pickWinner(id, side, name) {
+  if (!currentParticipant) { showToast('Selecciona tu nombre primero', 'error'); return; }
+  if (!localPicks[id]) localPicks[id] = {};
+  localPicks[id].winner = name;
+  document.getElementById(`tp-${id}-1`).classList.toggle('selected', side === 1);
+  document.getElementById(`tp-${id}-2`).classList.toggle('selected', side === 2);
+  document.getElementById(`mc-${id}`).classList.add('picked');
+  updateProgress();
+}
+
+function pickScore(id) {
+  if (!currentParticipant) return;
+  const s1 = document.getElementById(`sc1-${id}`).value;
+  const s2 = document.getElementById(`sc2-${id}`).value;
+  if (!localPicks[id]) localPicks[id] = {};
+  localPicks[id].score = `${s1}-${s2}`;
+}
+
+function loadParticipant() {
+  const sel = document.getElementById('participant-select');
+  currentParticipant = sel.value || null;
+  localPicks = {};
+  if (!currentParticipant) return;
+
+  // Carga desde datos ya bajados de Sheets (si existen)
+  const existing = allData[currentParticipant] || {};
+  MATCHES.forEach(m => {
+    const p = existing[m.id] || {};
+    localPicks[m.id] = { winner: p.winner || '', score: p.score || '' };
+    const b1 = document.getElementById(`tp-${m.id}-1`);
+    const b2 = document.getElementById(`tp-${m.id}-2`);
+    b1.classList.remove('selected');
+    b2.classList.remove('selected');
+    document.getElementById(`mc-${m.id}`).classList.remove('picked');
+    if (p.winner) {
+      const match = MATCHES.find(x => x.id === m.id);
+      if (p.winner === match.eq1) b1.classList.add('selected');
+      if (p.winner === match.eq2) b2.classList.add('selected');
+      document.getElementById(`mc-${m.id}`).classList.add('picked');
+    }
+    if (p.score) {
+      const [s1, s2] = p.score.split('-');
+      document.getElementById(`sc1-${m.id}`).value = s1 || 0;
+      document.getElementById(`sc2-${m.id}`).value = s2 || 0;
+    } else {
+      document.getElementById(`sc1-${m.id}`).value = 0;
+      document.getElementById(`sc2-${m.id}`).value = 0;
+    }
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const done = MATCHES.filter(m => localPicks[m.id] && localPicks[m.id].winner).length;
+  document.getElementById('prog-fill').style.width = `${(done / 16) * 100}%`;
+  document.getElementById('prog-label').textContent = `${done} / 16 completados`;
+}
+
+/* ── SAVE TO SHEETS ─────────────────────────────────────── */
+async function savePicks() {
+  if (!currentParticipant) { showToast('Selecciona tu nombre primero', 'error'); return; }
+  const url = getScriptUrl();
+  if (!url) { showToast('Configura la URL de Apps Script primero (pestaña ⚙ Config)', 'error'); return; }
+
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+  setStatus('pending', 'Enviando picks a Google Sheets...');
+
+  try {
+    const payload = { participant: currentParticipant, picks: localPicks };
+    const resp = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    const json = await resp.json();
+    if (json.status === 'ok') {
+      showToast('✓ Picks guardados en Sheets', 'success');
+      setStatus('ok', `Guardado en Google Sheets · ${new Date().toLocaleTimeString('es-CO')}`);
+      // refresca allData
+      await fetchAllData(false);
+    } else {
+      throw new Error(json.message || 'Error desconocido');
+    }
+  } catch (err) {
+    showToast('Error al guardar. Verifica la URL en Config.', 'error');
+    setStatus('err', 'No se pudo conectar con Google Sheets');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Guardar picks';
+  }
+}
+
+function setStatus(type, msg) {
+  const el = document.getElementById('sync-status');
+  el.style.display = 'block';
+  el.innerHTML = `<span class="status-dot ${type}"></span>${msg}`;
+}
+
+/* ── FETCH ALL DATA FROM SHEETS ─────────────────────────── */
+async function fetchAllData(showMsg = true) {
+  const url = getScriptUrl();
+  if (!url) return;
+  try {
+    const resp = await fetch(`${url}?t=${Date.now()}`);
+    const json = await resp.json();
+    if (json.status === 'ok') {
+      allData = json.data || {};
+      if (showMsg) showToast('Datos actualizados ✓', 'success');
+    }
+  } catch (err) {
+    if (showMsg) showToast('No se pudo conectar con Sheets', 'error');
+  }
+}
+
+/* ── TABLA ──────────────────────────────────────────────── */
+async function loadTabla() {
+  document.getElementById('summary-grid').innerHTML = '<div class="loading">Cargando datos...</div>';
+  document.getElementById('tabla-body').innerHTML = '';
+  await fetchAllData(false);
+  buildTabla();
+}
+
+function buildTabla() {
+  // summary cards
+  const sg = document.getElementById('summary-grid');
+  sg.innerHTML = '';
+  PARTICIPANTS.forEach(p => {
+    const picks = allData[p] || {};
+    const done = MATCHES.filter(m => picks[m.id] && picks[m.id].winner).length;
+    const card = document.createElement('div');
+    card.className = 'summary-card';
+    card.innerHTML = `
+      <div class="s-name">${p}</div>
+      <div class="s-pts">—</div>
+      <div class="s-picks">${done} / 16 picks</div>`;
+    sg.appendChild(card);
+  });
+
+  // table
+  document.getElementById('tabla-head').innerHTML = `<tr>
+    <th>Partido</th>
+    ${PARTICIPANTS.map(p => `<th>${p}</th>`).join('')}
+  </tr>`;
+
+  const tbody = document.getElementById('tabla-body');
+  tbody.innerHTML = '';
+  MATCHES.forEach(m => {
+    const tr = document.createElement('tr');
+    const matchLabel = `<strong>${m.eq1}</strong><br><span style="color:var(--text-dim);font-size:10px">vs ${m.eq2} · ${m.date}</span>`;
+    const cells = PARTICIPANTS.map(p => {
+      const pick = (allData[p] || {})[m.id];
+      if (pick && pick.winner) {
+        return `<td><span class="pick-flag has">${pick.winner}</span>${pick.score ? `<div class="score-badge">${pick.score}</div>` : ''}</td>`;
+      }
+      return `<td><span class="pick-flag no">sin pick</span></td>`;
+    }).join('');
+    tr.innerHTML = `<td>${matchLabel}</td>${cells}`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ── PANELS ─────────────────────────────────────────────── */
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(`panel-${name}`).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'tabla') loadTabla();
+}
+
+/* ── TOAST ──────────────────────────────────────────────── */
+let toastTimer;
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 2500);
+}
+
+init();
+</script>
+</body>
+</html>
