@@ -271,10 +271,30 @@ function calcPts(p,r){
   return p.clf===r.clf?(exact?4:2):0;
 }
 
-function init(){
-  const sel=document.getElementById('psel');
-  PARTS.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
+async function init(){
+  // Primero carga datos existentes para saber quién ya guardó
+  await fetchAll(false);
+  refreshSelector();
   buildForm();
+}
+
+function refreshSelector(){
+  const sel=document.getElementById('psel');
+  const currentVal=sel.value;
+  // Limpia opciones (excepto la primera)
+  while(sel.options.length>1) sel.remove(1);
+  // Agrega solo quienes NO han guardado aún (o el participante actual)
+  PARTS.forEach(n=>{
+    const yaGuardo=allData[n]&&Object.values(allData[n]).some(pk=>pk.clf&&pk.clf!=='');
+    if(!yaGuardo||n===me){
+      const o=document.createElement('option');
+      o.value=n;
+      o.textContent=yaGuardo?`${n} ✓`:n;
+      if(yaGuardo){o.style.color='#7ab8ff';o.style.fontStyle='italic';}
+      sel.appendChild(o);
+    }
+  });
+  if(currentVal) sel.value=currentVal;
 }
 
 function buildForm(){
@@ -410,7 +430,7 @@ async function save(){
   try{
     const r=await fetch(URL_GS,{method:'POST',body:JSON.stringify({participant:me,picks})});
     const j=await r.json();
-    if(j.status==='ok'){toast('¡Picks guardados! ✓','ok');setSbar('ok',`Guardado · ${new Date().toLocaleTimeString('es-CO')}`);await fetchAll(false);}
+    if(j.status==='ok'){toast('¡Picks guardados! ✓','ok');setSbar('ok',`Guardado · ${new Date().toLocaleTimeString('es-CO')}`);await fetchAll(false);refreshSelector();}
     else throw new Error(j.message);
   }catch(e){toast('Error al guardar','err');setSbar('err','No se pudo conectar');}
   finally{btn.disabled=false;btn.textContent='Guardar picks';}
@@ -436,7 +456,7 @@ function buildTabla(){
   const ord=[...PARTS].sort((a,b)=>pts[b]-pts[a]);
   const sg=document.getElementById('sgrid');sg.innerHTML='';
   ord.forEach((p,i)=>{
-    const done=MS.filter(m=>(allData[p]||{})[m.id]?.clf).length;
+    const done=MS.filter(m=>{const pk=(allData[p]||{})[m.id];return pk&&(pk.clf||pk.score);}).length;
     const c=document.createElement('div');c.className='scard'+(pts[p]===mx&&mx>0?' lead':'');
     c.innerHTML=`<div class="sc-rank">${i===0&&mx>0?'🥇':i===1&&mx>0?'🥈':i===2&&mx>0?'🥉':'#'+(i+1)}</div>
       <div class="sc-name">${p}</div><div class="sc-lbl">puntos</div>
