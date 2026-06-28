@@ -496,18 +496,18 @@ function buildTabla(){
     </td>`;
     const cells=PARTS.map(p=>{
       const pk=(allData[p]||{})[m.id];
-      if(!pk?.clf) return \`<td><div class="pick-empty">—</div></td>\`;
+      if(!pk?.clf) return `<td><div class="pick-empty">—</div></td>`;
       const pv=calcPts(pk,res[m.id]);
-      const badge=pv===4?\`<span class="pb pb4">+4</span>\`:pv===2?\`<span class="pb pb2">+2</span>\`:'';
+      const badge=pv===4?`<span class="pb pb4">+4</span>`:pv===2?`<span class="pb pb2">+2</span>`:'';
       const hasScores=(pk.s1!==null&&pk.s1!==undefined&&pk.s2!==null&&pk.s2!==undefined);
       const isPen=pk.isPen===true||(hasScores&&Number(pk.s1)===Number(pk.s2));
-      const sc=hasScores?\`${pk.s1} - ${pk.s2}\`:(pk.score&&pk.score.match(/^\d+-\d+$/)?(pk.score.replace('-',' - ')):'');
-      return \`<td>
+      const sc=hasScores?`${pk.s1} - ${pk.s2}`:(pk.score&&pk.score.match(/^\d+-\d+$/)?(pk.score.replace('-',' - ')):'');
+      return `<td>
         <div class="pick-clf${isPen?' pen':''}">${pk.clf}</div>
         <div class="pick-score">${sc}</div>
         ${isPen?'<div class="pick-pen">penales</div>':''}
         ${badge}
-      </td>\`;
+      </td>`;
     }).join('');
     tr.innerHTML=partidoCell+cells;
     tb.appendChild(tr);
