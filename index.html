@@ -575,7 +575,10 @@ const PARTS=[
   'Daniel Soto','Jesus A. Güiza H','Stella Velasco',
   'Esteban Güiza V','Silvia Pabon','Ludy Velasco'
 ];
-let RESULTS={1:{clf:'Canadá',s1:0,s2:1,isPen:false}};
+let RESULTS={
+  1:{clf:'Canadá', s1:0, s2:1, isPen:false},
+  4:{clf:'Brasil',  s1:2, s2:1, isPen:false},
+};
 let allData={};
 
 function calcPts(pk,res){
@@ -592,21 +595,24 @@ function totalPts(p){
 function buildRanking(){
   const ranked=[...PARTS].sort((a,b)=>totalPts(b)-totalPts(a));
   const podio=document.getElementById('podio');podio.innerHTML='';
-  const medals=['01','02','03'];
+  const medals=['01','02','03']; // unused
   ranked.forEach((name,i)=>{
     const pts=totalPts(name);
     const exact=MS.filter(m=>calcPts((allData[name]||{})[m.id],RESULTS[m.id])===4).length;
     const clf=MS.filter(m=>calcPts((allData[name]||{})[m.id],RESULTS[m.id])===2).length;
-    const medal=pts>0?(medals[i]||String(i+1).padStart(2,'0')):'—';
+    // Only show rank number if this person has unique position (not tied)
+    const samePts = ranked.filter(n => totalPts(n) === pts).length;
+    const medal = pts === 0 ? '' : samePts > 1 ? '' : (medals[i] || String(i+1).padStart(2,'0'));
     const np=name.split(' ');
     const sn=np[0]+' '+(np[np.length-1]||'');
     const detail=[exact>0?exact+' exacto':'',clf>0?clf+' clasif.':''].filter(Boolean).join(' · ');
-    const isHero=i===0&&pts>0;
+    const maxPts = Math.max(...ranked.map(n=>totalPts(n)));
+    const isHero = pts>0 && pts===maxPts;
     const c=document.createElement('div');
     c.className='p-card'+(isHero?' hero lead':'')+(pts===0?' zero':'');
     c.style.animation='cardIn .5s var(--smooth) both';
     c.style.animationDelay=(i*.06)+'s';
-    c.innerHTML=`${isHero?'<div class="p-shimmer"></div>':''}<div class="p-rank">${medal}</div><div class="p-name">${sn}</div><div class="p-lbl">puntos</div><div class="p-pts">${pts}</div><div class="p-detail">${detail}</div>`;
+    c.innerHTML=`${isHero?'<div class="p-shimmer"></div>':''}${medal?`<div class="p-rank">${medal}</div>`:''}<div class="p-name">${sn}</div><div class="p-lbl">puntos</div><div class="p-pts">${pts}</div><div class="p-detail">${detail}</div>`;
     podio.appendChild(c);
   });
 
@@ -703,7 +709,10 @@ const FLAGS={
 const ES={'South Africa':'Sudáfrica','Canada':'Canadá','Germany':'Alemania','Paraguay':'Paraguay','Netherlands':'P. Bajos','Morocco':'Marruecos','Brazil':'Brasil','Japan':'Japón','France':'Francia','Sweden':'Suecia','Ivory Coast':'C. de Marfil','Norway':'Noruega','Mexico':'México','Ecuador':'Ecuador','England':'Inglaterra','Congo DR':'RD Congo','USA':'EE.UU.','Bosnia and Herzegovina':'Bosnia','Belgium':'Bélgica','Senegal':'Senegal','Portugal':'Portugal','Croatia':'Croacia','Spain':'España','Austria':'Austria','Switzerland':'Suiza','Algeria':'Argelia','Argentina':'Argentina','Cape Verde':'Cabo Verde','Colombia':'Colombia','Ghana':'Ghana','Australia':'Australia','Egypt':'Egipto'};
 const R16=[['South Africa','Canada'],['Germany','Paraguay'],['Netherlands','Morocco'],['Brazil','Japan'],['France','Sweden'],['Ivory Coast','Norway'],['Mexico','Ecuador'],['England','Congo DR'],['USA','Bosnia and Herzegovina'],['Belgium','Senegal'],['Portugal','Croatia'],['Spain','Austria'],['Switzerland','Algeria'],['Argentina','Cape Verde'],['Colombia','Ghana'],['Australia','Egypt']];
 const DATES=['Dom 28 jun','Lun 29 jun','Lun 29 jun','Lun 29 jun','Mar 30 jun','Mar 30 jun','Mar 30 jun','Mié 1 jul','Mié 1 jul','Mié 1 jul','Jue 2 jul','Jue 2 jul','Jue 2 jul','Vie 3 jul','Vie 3 jul','Vie 3 jul'];
-const KNOWN={'South Africa|Canada':{s1:0,s2:1,done:true}};
+const KNOWN={
+  'South Africa|Canada':{s1:0,s2:1,done:true},
+  'Brazil|Japan':       {s1:2,s2:1,done:true},
+};
 
 function tbox(name,score,status){
   const f=FLAGS[name],n=ES[name]||name,sc=score!==null&&score!==undefined?score:'';
