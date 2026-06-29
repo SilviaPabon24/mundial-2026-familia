@@ -555,22 +555,22 @@ footer{
 <script>
 const URL_GS='https://script.google.com/macros/s/AKfycbzQLHPFuSe0IXnfbHMUf7FP7EOHVpz8dclJPZY7xsbQN0ZfMQH4ruE7odK5XVCH5I63Kw/exec';
 const MS=[
-  {id:1,date:'Dom 28 jun',eq1:'Sudáfrica',eq2:'Canadá'},
-  {id:2,date:'Lun 29 jun',eq1:'Alemania',eq2:'Paraguay'},
-  {id:3,date:'Lun 29 jun',eq1:'Países Bajos',eq2:'Marruecos'},
-  {id:4,date:'Lun 29 jun',eq1:'Brasil',eq2:'Japón'},
-  {id:5,date:'Mar 30 jun',eq1:'Francia',eq2:'Suecia'},
-  {id:6,date:'Mar 30 jun',eq1:'C. de Marfil',eq2:'Noruega'},
-  {id:7,date:'Mar 30 jun',eq1:'México',eq2:'Ecuador'},
-  {id:8,date:'Mié 1 jul',eq1:'Inglaterra',eq2:'RD del Congo'},
-  {id:9,date:'Mié 1 jul',eq1:'EE.UU.',eq2:'Bosnia'},
-  {id:10,date:'Mié 1 jul',eq1:'Bélgica',eq2:'Senegal'},
-  {id:11,date:'Jue 2 jul',eq1:'Portugal',eq2:'Croacia'},
-  {id:12,date:'Jue 2 jul',eq1:'España',eq2:'Austria'},
-  {id:13,date:'Jue 2 jul',eq1:'Suiza',eq2:'Argelia'},
-  {id:14,date:'Vie 3 jul',eq1:'Argentina',eq2:'Cabo Verde'},
-  {id:15,date:'Vie 3 jul',eq1:'Colombia',eq2:'Ghana'},
-  {id:16,date:'Vie 3 jul',eq1:'Australia',eq2:'Egipto'},
+  {id:1,  pnum:1,  date:'Dom 28 jun · 14:00',eq1:'Sudáfrica',   eq2:'Canadá'      },
+  {id:4,  pnum:2,  date:'Lun 29 jun · 12:00',eq1:'Brasil',       eq2:'Japón'       },
+  {id:2,  pnum:3,  date:'Lun 29 jun · 15:30',eq1:'Alemania',     eq2:'Paraguay'    },
+  {id:3,  pnum:4,  date:'Lun 29 jun · 20:00',eq1:'Países Bajos', eq2:'Marruecos'   },
+  {id:6,  pnum:5,  date:'Mar 30 jun · 12:00',eq1:'C. de Marfil', eq2:'Noruega'     },
+  {id:5,  pnum:6,  date:'Mar 30 jun · 16:00',eq1:'Francia',      eq2:'Suecia'      },
+  {id:7,  pnum:7,  date:'Mar 30 jun · 20:00',eq1:'México',       eq2:'Ecuador'     },
+  {id:8,  pnum:8,  date:'Mié 1 jul · 11:00', eq1:'Inglaterra',   eq2:'RD del Congo'},
+  {id:10, pnum:9,  date:'Mié 1 jul · 15:00', eq1:'Bélgica',      eq2:'Senegal'     },
+  {id:9,  pnum:10, date:'Mié 1 jul · 19:00', eq1:'EE.UU.',       eq2:'Bosnia'      },
+  {id:12, pnum:11, date:'Jue 2 jul · 14:00', eq1:'España',       eq2:'Austria'     },
+  {id:11, pnum:12, date:'Jue 2 jul · 18:00', eq1:'Portugal',     eq2:'Croacia'     },
+  {id:13, pnum:13, date:'Jue 2 jul · 22:00', eq1:'Suiza',        eq2:'Argelia'     },
+  {id:14, pnum:14, date:'Vie 3 jul · 14:00', eq1:'Argentina',    eq2:'Cabo Verde'  },
+  {id:15, pnum:15, date:'Vie 3 jul · 17:00', eq1:'Colombia',     eq2:'Ghana'       },
+  {id:16, pnum:16, date:'Vie 3 jul · 20:30', eq1:'Australia',    eq2:'Egipto'      },
 ];
 const PARTS=[
   'Yorguin Güiza V','Sandra Sandoval','Nicolas Güiza Sandoval',
@@ -637,7 +637,7 @@ function buildTabla(){
   MS.forEach(m=>{
     const res=RESULTS[m.id];
     const tr=document.createElement('tr');
-    const pc=`<td class="col-p"><span class="pnum">P${m.id}</span><span class="pname">${m.eq1} vs ${m.eq2}</span><div class="pdate">${m.date}${res?' · <span style="color:var(--am);font-weight:600">'+res.clf+' '+res.s1+'-'+res.s2+'</span>':''}</div></td>`;
+    const pc=`<td class="col-p"><span class="pname">${m.eq1} vs ${m.eq2}</span><div class="pdate">${m.date}${res?' · <span style="color:var(--am);font-weight:600">'+res.clf+' '+res.s1+'-'+res.s2+'</span>':''}</div></td>`;
     const cells=PARTS.map(p=>{
       const pk=(allData[p]||{})[m.id];
       if(!pk?.clf) return`<td><div class="pick-empty">—</div></td>`;
