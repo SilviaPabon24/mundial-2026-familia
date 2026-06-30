@@ -606,7 +606,7 @@ function buildRanking(){
     const samePts = ranked.filter(n => totalPts(n) === pts).length;
     const medal = pts === 0 ? '' : samePts > 1 ? '' : (medals[i] || String(i+1).padStart(2,'0'));
     const np=name.split(' ');
-    const sn=np[0]+' '+(np[np.length-1]||'');
+    const sn=np[0]+(np[1]?' '+np[1]:'');
     const detail=[exact>0?exact+' exacto':'',clf>0?clf+' clasif.':''].filter(Boolean).join(' · ');
     const maxPts = Math.max(...ranked.map(n=>totalPts(n)));
     const isHero = pts>0 && pts===maxPts;
