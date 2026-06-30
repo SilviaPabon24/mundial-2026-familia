@@ -576,9 +576,11 @@ const PARTS=[
   'Esteban Güiza V','Silvia Pabon','Ludy Velasco'
 ];
 let RESULTS={
-  1:{clf:'Canadá',   s1:0, s2:1, isPen:false},
-  4:{clf:'Brasil',   s1:2, s2:1, isPen:false},
-  2:{clf:'Paraguay', s1:1, s2:1, isPen:true},
+  1:{clf:'Canadá',    s1:0, s2:1, isPen:false},
+  4:{clf:'Brasil',    s1:2, s2:1, isPen:false},
+  2:{clf:'Paraguay',  s1:1, s2:1, isPen:true},
+  3:{clf:'Marruecos', s1:1, s2:1, isPen:true},
+  6:{clf:'Noruega',   s1:1, s2:2, isPen:false},
 };
 let allData={};
 
@@ -605,7 +607,7 @@ function buildRanking(){
     const samePts = ranked.filter(n => totalPts(n) === pts).length;
     const medal = pts === 0 ? '' : samePts > 1 ? '' : (medals[i] || String(i+1).padStart(2,'0'));
     const np=name.split(' ');
-    const sn=np[0]+' '+(np[np.length-1]||'');
+    const sn=np[0]+(np[1]?' '+np[1]:'');
     const detail=[exact>0?exact+' exacto':'',clf>0?clf+' clasif.':''].filter(Boolean).join(' · ');
     const maxPts = Math.max(...ranked.map(n=>totalPts(n)));
     const isHero = pts>0 && pts===maxPts;
@@ -714,6 +716,8 @@ const KNOWN={
   'South Africa|Canada':{s1:0,s2:1,done:true},
   'Brazil|Japan':       {s1:2,s2:1,done:true},
   'Germany|Paraguay':   {s1:1,s2:1,done:true,pen:'Paraguay'},
+  'Netherlands|Morocco':{s1:1,s2:1,done:true,pen:'Morocco'},
+  'Ivory Coast|Norway': {s1:1,s2:2,done:true},
 };
 
 function tbox(name,score,status){
