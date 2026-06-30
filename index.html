@@ -747,24 +747,43 @@ async function loadBracket(){
 
 function buildBK(known){
   const winners=[];
-  const m16=R16.map((pair,i)=>{
+  // Build 16avos matches
+  const m16=R16_ORDER.map((pair,i)=>{
     const k1=pair[0]+'|'+pair[1],k2=pair[1]+'|'+pair[0];
     const res=known[k1]||known[k2];
     let b1,b2,w=null;
     if(res?.done){
       const fl=!!known[k2],s1=fl?res.s2:res.s1,s2=fl?res.s1:res.s2;
-      b1=tbox(pair[0],s1,s1>s2?'win':s2>s1?'lose':'');
-      b2=tbox(pair[1],s2,s2>s1?'win':s1>s2?'lose':'');
-      w=s1>s2?pair[0]:s2>s1?pair[1]:null;
+      const penW=res.pen||null;
+      const w1=s1>s2||(s1===s2&&penW===pair[0]);
+      const w2=s2>s1||(s1===s2&&penW===pair[1]);
+      b1=tbox(pair[0],s1,w1?'win':w2?'lose':'');
+      b2=tbox(pair[1],s2,w2?'win':w1?'lose':'');
+      w=w1?pair[0]:w2?pair[1]:null;
     }else{b1=tbox(pair[0],null,'');b2=tbox(pair[1],null,'');}
     winners.push(w);
     return`<div class="bk-match"><div class="bk-date">P${i+1} · ${DATES[i]}</div>${b1}${b2}</div>`;
   });
-  const oct=[];
-  for(let i=0;i<16;i+=2){
-    const w1=winners[i],w2=winners[i+1];
-    oct.push(`<div class="bk-match" style="margin:6px 0">${w1?tbox(w1,null,''):tbd('G. P'+(i+1))}${w2?tbox(w2,null,''):tbd('G. P'+(i+2))}</div>`);
-  }
+  // Official Round of 16 pairings (octavos)
+  // winners index matches R16_ORDER: 0=CAN,1=BRA,2=PAR,3=NED/MAR,4=CIV/NOR,5=FRA/SWE
+  //   6=MEX,7=ENG,8=USA,9=BEL,10=ESP,11=POR,12=SUI,13=ARG,14=COL,15=AUS
+  const OCT_PAIRS=[
+    [0,3],  // Canadá vs NED/MAR
+    [2,5],  // Paraguay vs FRA/SWE
+    [1,4],  // Brasil vs CIV/NOR
+    [6,7],  // México vs Inglaterra
+    [8,9],  // EE.UU. vs Bélgica
+    [10,11],// España vs Portugal
+    [12,14],// Suiza vs Colombia
+    [13,15],// Argentina vs Australia
+  ];
+  const oct=OCT_PAIRS.map(([a,b])=>{
+    const w1=winners[a],w2=winners[b];
+    const la=R16_ORDER[a],lb=R16_ORDER[b];
+    const l1=la?`${ES[la[0]]||la[0]} / ${ES[la[1]]||la[1]}`:'?';
+    const l2=lb?`${ES[lb[0]]||lb[0]} / ${ES[lb[1]]||lb[1]}`:'?';
+    return `<div class="bk-match" style="margin:6px 0">${w1?tbox(w1,null,''):tbd(l1)}${w2?tbox(w2,null,''):tbd(l2)}</div>`;
+  });
   const qtr=Array(4).fill(0).map(()=>`<div class="bk-match" style="margin:24px 0">${tbd()}${tbd()}</div>`).join('');
   const semi=Array(2).fill(0).map(()=>`<div class="bk-match" style="margin:76px 0">${tbd()}${tbd()}</div>`).join('');
   const fin=`<div class="bk-match" style="margin:auto"><div style="font-size:22px;text-align:center;margin-bottom:7px">🏆</div>${tbd()}${tbd()}</div>`;
