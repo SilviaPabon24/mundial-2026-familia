@@ -576,8 +576,9 @@ const PARTS=[
   'Esteban Güiza V','Silvia Pabon','Ludy Velasco'
 ];
 let RESULTS={
-  1:{clf:'Canadá', s1:0, s2:1, isPen:false},
-  4:{clf:'Brasil',  s1:2, s2:1, isPen:false},
+  1:{clf:'Canadá',   s1:0, s2:1, isPen:false},
+  4:{clf:'Brasil',   s1:2, s2:1, isPen:false},
+  2:{clf:'Paraguay', s1:1, s2:1, isPen:true},
 };
 let allData={};
 
@@ -712,6 +713,7 @@ const DATES=['Dom 28 jun','Lun 29 jun','Lun 29 jun','Lun 29 jun','Mar 30 jun','M
 const KNOWN={
   'South Africa|Canada':{s1:0,s2:1,done:true},
   'Brazil|Japan':       {s1:2,s2:1,done:true},
+  'Germany|Paraguay':   {s1:1,s2:1,done:true,pen:'Paraguay'},
 };
 
 function tbox(name,score,status){
