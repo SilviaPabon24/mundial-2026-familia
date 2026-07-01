@@ -683,7 +683,7 @@ function showPanel(n,b){
   document.querySelectorAll('.nav-pill button').forEach(x=>x.classList.remove('active'));
   document.getElementById('panel-'+n).classList.add('active');
   if(b)b.classList.add('active');
-  if(n==='bracket') setTimeout(loadBracket, 50);
+  if(n==='bracket') setTimeout(loadBracket, 100);
   if(n==='ranking') window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -747,67 +747,79 @@ function tbox(name,score,status){
 function tbd(l){return`<div class="bk-team tbd"><span class="bk-flag-ph"></span><span class="bk-name">${l||'Por definir'}</span></div>`;}
 
 function loadBracket(){
-  document.getElementById('bracket-updated').textContent='Actualizado · '+new Date().toLocaleString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-  buildBK(KNOWN);
+  const updEl = document.getElementById('bracket-updated');
+  const wrapEl = document.getElementById('bracket-wrap');
+  if(!updEl || !wrapEl){ console.error('Bracket elements not found'); return; }
+  updEl.textContent='Actualizado · '+new Date().toLocaleString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+  try{ buildBK(KNOWN); }
+  catch(e){ wrapEl.innerHTML='<div style="color:red;padding:1rem">Error: '+e.message+'</div>'; console.error(e); }
 }
 
 
+const R16_ORDER=[
+  ['South Africa','Canada'],['Germany','Paraguay'],['Netherlands','Morocco'],['Brazil','Japan'],
+  ['France','Sweden'],['Ivory Coast','Norway'],['Mexico','Ecuador'],['England','Congo DR'],
+  ['USA','Bosnia and Herzegovina'],['Belgium','Senegal'],['Portugal','Croatia'],['Spain','Austria'],
+  ['Switzerland','Algeria'],['Argentina','Cape Verde'],['Colombia','Ghana'],['Australia','Egypt'],
+];
+const DATES=['Dom 28 jun','Lun 29 jun','Lun 29 jun','Lun 29 jun','Mar 30 jun','Mar 30 jun','Mar 30 jun','Mié 1 jul','Mié 1 jul','Mié 1 jul','Jue 2 jul','Jue 2 jul','Jue 2 jul','Vie 3 jul','Vie 3 jul','Vie 3 jul'];
+
 function buildBK(known){
-  const winners=[];
-  // Build 16avos matches
-  const m16=R16_ORDER.map((pair,i)=>{
-    const k1=pair[0]+'|'+pair[1],k2=pair[1]+'|'+pair[0];
-    const res=known[k1]||known[k2];
-    let b1,b2,w=null;
-    if(res?.done){
-      const fl=!!known[k2],s1=fl?res.s2:res.s1,s2=fl?res.s1:res.s2;
-      const penW=res.pen||null;
-      const w1=s1>s2||(s1===s2&&penW===pair[0]);
-      const w2=s2>s1||(s1===s2&&penW===pair[1]);
-      b1=tbox(pair[0],s1,w1?'win':w2?'lose':'');
-      b2=tbox(pair[1],s2,w2?'win':w1?'lose':'');
-      w=w1?pair[0]:w2?pair[1]:null;
-    }else{b1=tbox(pair[0],null,'');b2=tbox(pair[1],null,'');}
-    winners.push(w);
-    return`<div class="bk-match"><div class="bk-date">P${i+1} · ${DATES[i]}</div>${b1}${b2}</div>`;
-  });
-  // Official Round of 16 pairings (octavos)
-  // winners index matches R16_ORDER: 0=CAN,1=BRA,2=PAR,3=NED/MAR,4=CIV/NOR,5=FRA/SWE
-  //   6=MEX,7=ENG,8=USA,9=BEL,10=ESP,11=POR,12=SUI,13=ARG,14=COL,15=AUS
-  const OCT_PAIRS=[
-    [0,3],  // Canadá vs NED/MAR
-    [2,5],  // Paraguay vs FRA/SWE
-    [1,4],  // Brasil vs CIV/NOR
-    [6,7],  // México vs Inglaterra
-    [8,9],  // EE.UU. vs Bélgica
-    [10,11],// España vs Portugal
-    [12,14],// Suiza vs Colombia
-    [13,15],// Argentina vs Australia
-  ];
-  const oct=OCT_PAIRS.map(([a,b])=>{
-    const w1=winners[a],w2=winners[b];
-    const la=R16_ORDER[a],lb=R16_ORDER[b];
-    const l1=la?`${ES[la[0]]||la[0]} / ${ES[la[1]]||la[1]}`:'?';
-    const l2=lb?`${ES[lb[0]]||lb[0]} / ${ES[lb[1]]||lb[1]}`:'?';
-    return `<div class="bk-match" style="margin:6px 0">${w1?tbox(w1,null,''):tbd(l1)}${w2?tbox(w2,null,''):tbd(l2)}</div>`;
-  });
-  const qtr=Array(4).fill(0).map(()=>`<div class="bk-match" style="margin:24px 0">${tbd()}${tbd()}</div>`).join('');
-  const semi=Array(2).fill(0).map(()=>`<div class="bk-match" style="margin:76px 0">${tbd()}${tbd()}</div>`).join('');
-  const fin=`<div class="bk-match" style="margin:auto"><div style="font-size:22px;text-align:center;margin-bottom:7px">🏆</div>${tbd()}${tbd()}</div>`;
-  document.getElementById('bracket-wrap').innerHTML=`
-    <div class="bk-rounds">
-      <div class="bk-col" style="min-width:153px"><div class="bk-lbl">16avos · 28–30 jun</div><div class="bk-slots">${m16.slice(0,8).join('')}</div></div>
-      <div class="bk-col" style="min-width:153px"><div class="bk-lbl">16avos · 1–3 jul</div><div class="bk-slots">${m16.slice(8).join('')}</div></div>
-      <div class="bk-col" style="min-width:146px"><div class="bk-lbl">Octavos · ~6 jul</div><div class="bk-slots" style="justify-content:space-around">${oct.join('')}</div></div>
-      <div class="bk-col" style="min-width:143px"><div class="bk-lbl">Cuartos · ~9 jul</div><div class="bk-slots" style="justify-content:space-around">${qtr}</div></div>
-      <div class="bk-col" style="min-width:143px"><div class="bk-lbl">Semis · ~14 jul</div><div class="bk-slots" style="justify-content:space-around">${semi}</div></div>
-      <div class="bk-col" style="min-width:143px"><div class="bk-lbl">Final · 19 jul</div><div class="bk-slots" style="justify-content:center">${fin}</div></div>
-    </div>
-    <div class="bk-legend">
-      <div class="bk-leg"><div class="bk-ldot" style="background:var(--green-bg);border:1px solid var(--green-border)"></div>Clasificado</div>
-      <div class="bk-leg"><div class="bk-ldot" style="background:var(--card);border:1px solid var(--border);opacity:.3"></div>Eliminado</div>
-      <div class="bk-leg"><div class="bk-ldot" style="background:rgba(255,255,255,.015);border:1px dashed rgba(255,255,255,.08)"></div>Pendiente</div>
-    </div>`;
+  try{
+    const winners=[];
+    const m16=R16_ORDER.map((pair,i)=>{
+      const k1=pair[0]+'|'+pair[1],k2=pair[1]+'|'+pair[0];
+      const res=known[k1]||known[k2];
+      let b1,b2,w=null;
+      if(res&&res.done){
+        const fl=!!(known[k2]);
+        const s1=fl?res.s2:res.s1, s2=fl?res.s1:res.s2;
+        const penW=res.pen||null;
+        const w1=s1>s2||(s1===s2&&penW===pair[0]);
+        const w2=s2>s1||(s1===s2&&penW===pair[1]);
+        b1=tbox(pair[0],s1,w1?'win':w2?'lose':'');
+        b2=tbox(pair[1],s2,w2?'win':w1?'lose':'');
+        w=w1?pair[0]:w2?pair[1]:null;
+      }else{
+        b1=tbox(pair[0],null,'');
+        b2=tbox(pair[1],null,'');
+      }
+      winners.push(w);
+      return '<div class="bk-match"><div class="bk-date">P'+(i+1)+' · '+DATES[i]+'</div>'+b1+b2+'</div>';
+    });
+
+    const OCT_PAIRS=[[0,3],[2,5],[1,4],[6,7],[8,9],[10,11],[12,14],[13,15]];
+    const oct=OCT_PAIRS.map(function(pair){
+      const a=pair[0],b=pair[1];
+      const w1=winners[a], w2=winners[b];
+      const la=R16_ORDER[a], lb=R16_ORDER[b];
+      const l1=la?(ES[la[0]]||la[0])+' / '+(ES[la[1]]||la[1]):'?';
+      const l2=lb?(ES[lb[0]]||lb[0])+' / '+(ES[lb[1]]||lb[1]):'?';
+      return '<div class="bk-match" style="margin:6px 0">'+(w1?tbox(w1,null,''):tbd(l1))+(w2?tbox(w2,null,''):tbd(l2))+'</div>';
+    });
+
+    const qtr=Array(4).fill(0).map(function(){return '<div class="bk-match" style="margin:24px 0">'+tbd()+tbd()+'</div>';}).join('');
+    const semi=Array(2).fill(0).map(function(){return '<div class="bk-match" style="margin:76px 0">'+tbd()+tbd()+'</div>';}).join('');
+    const fin='<div class="bk-match" style="margin:auto"><div style="font-size:22px;text-align:center;margin-bottom:7px">🏆</div>'+tbd()+tbd()+'</div>';
+
+    document.getElementById('bracket-wrap').innerHTML=
+      '<div class="bk-rounds">'+
+      '<div class="bk-col" style="min-width:153px"><div class="bk-lbl">16avos · 28–30 jun</div><div class="bk-slots">'+m16.slice(0,8).join('')+'</div></div>'+
+      '<div class="bk-col" style="min-width:153px"><div class="bk-lbl">16avos · 1–3 jul</div><div class="bk-slots">'+m16.slice(8).join('')+'</div></div>'+
+      '<div class="bk-col" style="min-width:146px"><div class="bk-lbl">Octavos · ~6 jul</div><div class="bk-slots" style="justify-content:space-around">'+oct.join('')+'</div></div>'+
+      '<div class="bk-col" style="min-width:143px"><div class="bk-lbl">Cuartos · ~9 jul</div><div class="bk-slots" style="justify-content:space-around">'+qtr+'</div></div>'+
+      '<div class="bk-col" style="min-width:143px"><div class="bk-lbl">Semis · ~14 jul</div><div class="bk-slots" style="justify-content:space-around">'+semi+'</div></div>'+
+      '<div class="bk-col" style="min-width:143px"><div class="bk-lbl">Final · 19 jul</div><div class="bk-slots" style="justify-content:center">'+fin+'</div></div>'+
+      '</div>'+
+      '<div class="bk-legend">'+
+      '<div class="bk-leg"><div class="bk-ldot" style="background:var(--green-bg);border:1px solid var(--green-border)"></div>Clasificado</div>'+
+      '<div class="bk-leg"><div class="bk-ldot" style="background:var(--card);border:1px solid var(--border);opacity:.3"></div>Eliminado</div>'+
+      '<div class="bk-leg"><div class="bk-ldot" style="background:rgba(255,255,255,.015);border:1px dashed rgba(255,255,255,.08)"></div>Pendiente</div>'+
+      '</div>';
+  }catch(e){
+    console.error('buildBK error:',e);
+    document.getElementById('bracket-wrap').innerHTML='<div style="padding:1rem;color:#ff7070">Error al cargar llaves: '+e.message+'</div>';
+  }
 }
 </script>
 </body>
