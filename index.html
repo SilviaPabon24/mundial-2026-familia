@@ -670,11 +670,13 @@ function showPanel(n,b){
   document.querySelectorAll('.nav-pill button').forEach(x=>x.classList.remove('active'));
   document.getElementById('panel-'+n).classList.add('active');
   if(b)b.classList.add('active');
-  if(n==='bracket')loadBracket();
-  if(n==='ranking')window.scrollTo({top:0,behavior:'smooth'});
+  if(n==='bracket') setTimeout(loadBracket, 50);
+  if(n==='ranking') window.scrollTo({top:0,behavior:'smooth'});
 }
 
 refreshData();
+// Pre-render bracket on load
+setTimeout(()=>{ if(document.getElementById('panel-bracket').classList.contains('active')) loadBracket(); }, 100);
 
 /* ─── BRACKET ────────────────────────────── */
 const FLAGS={
