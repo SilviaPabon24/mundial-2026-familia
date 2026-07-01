@@ -789,7 +789,17 @@ function buildBK(known){
       return '<div class="bk-match"><div class="bk-date">P'+(i+1)+' · '+DATES[i]+'</div>'+b1+b2+'</div>';
     });
 
-    const OCT_PAIRS=[[0,3],[2,5],[1,4],[6,7],[8,9],[10,11],[12,14],[13,15]];
+    // Official octavos from FIFA bracket
+  const OCT_PAIRS=[
+    [0,3],  // Canadá vs Marruecos
+    [2,5],  // Paraguay vs Francia
+    [1,4],  // Brasil vs Noruega
+    [6,7],  // México vs Inglaterra
+    [8,9],  // EE.UU. vs Senegal/Bélgica
+    [10,11],// España vs Portugal
+    [12,14],// Suiza vs Colombia
+    [13,15],// Argentina vs Australia
+  ];
     const oct=OCT_PAIRS.map(function(pair){
       const a=pair[0],b=pair[1];
       const w1=winners[a], w2=winners[b];
