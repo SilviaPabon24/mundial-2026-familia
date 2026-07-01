@@ -731,27 +731,11 @@ function tbox(name,score,status){
 }
 function tbd(l){return`<div class="bk-team tbd"><span class="bk-flag-ph"></span><span class="bk-name">${l||'Por definir'}</span></div>`;}
 
-async function loadBracket(){
-  document.getElementById('bracket-updated').textContent='Cargando...';
-  document.getElementById('bracket-wrap').innerHTML='<div style="padding:2rem;text-align:center;color:var(--text3);font-size:12px">Consultando resultados...</div>';
-  let live={...KNOWN};
-  try{
-    const dates=['2026-06-28','2026-06-29','2026-06-30','2026-07-01','2026-07-02','2026-07-03'];
-    const res=await Promise.all(dates.map(d=>fetch(`https://api.sportradar.us/soccer/trial/v4/es/schedules/${d}/summaries.json?api_key=demo`).then(r=>r.ok?r.json():null).catch(()=>null)));
-    res.forEach(data=>{
-      if(!data?.summaries)return;
-      data.summaries.forEach(s=>{
-        const sp=s.sport_event,sc=s.sport_event_status;
-        if(sc?.status!=='closed'&&sc?.status!=='ended')return;
-        const h=sp?.competitors?.[0]?.name,a=sp?.competitors?.[1]?.name;
-        if(!h||!a)return;
-        if(R16.some(p=>(p[0]===h&&p[1]===a)||(p[0]===a&&p[1]===h)))live[h+'|'+a]={s1:sc.home_score??0,s2:sc.away_score??0,done:true};
-      });
-    });
-  }catch(e){}
-  buildBK(live);
-  document.getElementById('bracket-updated').textContent='Actualizado · '+new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+function loadBracket(){
+  document.getElementById('bracket-updated').textContent='Actualizado · '+new Date().toLocaleString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+  buildBK(KNOWN);
 }
+
 
 function buildBK(known){
   const winners=[];
