@@ -593,6 +593,7 @@ let RESULTS={
   12:{clf:'España',     s1:3, s2:0, isPen:false},
   11:{clf:'Portugal',   s1:2, s2:1, isPen:false},
   13:{clf:'Suiza',      s1:2, s2:0, isPen:false},
+  16:{clf:'Egipto',     s1:1, s2:1, isPen:true},
 };
 let allData={};
 
@@ -609,7 +610,7 @@ function totalPts(p){
 
 function buildRanking(){
   // Última actualización
-  const lastMatch = 'Suiza 2-0 Argelia · Jue 2 jul · 13 de 16 partidos';
+  const lastMatch = 'Australia 1-1 Egipto (pen) · Vie 3 jul · 14 de 16 partidos';
   const el = document.getElementById('last-updated');
   if(el) el.textContent = 'Puntos actualizados con: ' + lastMatch;
   const ranked=[...PARTS].sort((a,b)=>totalPts(b)-totalPts(a));
@@ -764,6 +765,7 @@ const KNOWN={
   'Spain|Austria':             {s1:3,s2:0,done:true},
   'Portugal|Croatia':          {s1:2,s2:1,done:true},
   'Switzerland|Algeria':       {s1:2,s2:0,done:true},
+  'Australia|Egypt':           {s1:1,s2:1,done:true,pen:'Egypt'},
 };
 
 function tbox(name,score,status){
