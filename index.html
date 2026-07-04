@@ -9,11 +9,151 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-6ZJZ70F6D8');
+
+// ── PRINT PDF ─────────────────────────────────────────
+function printPicks(fase){
+  const tableId = fase==='16avos' ? 'picks16-table' : 'picks-oct-table';
+  const tableEl = document.getElementById(tableId);
+  if(!tableEl) return;
+
+  const title = fase==='16avos' ? 'Picks 16avos de Final' : 'Picks Octavos de Final';
+  const now = new Date().toLocaleString('es-CO', {
+    day:'2-digit', month:'long', year:'numeric',
+    hour:'2-digit', minute:'2-digit'
+  });
+
+  const printWin = window.open('','_blank');
+  printWin.document.write(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>${title} · Polla Mundial 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#fff;color:#111;padding:24px;font-size:11px}
+  .header{text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #FCD116}
+  .header h1{font-size:20px;font-weight:700;color:#003087;margin-bottom:4px}
+  .header .sub{font-size:11px;color:#666}
+  .header .fecha{font-size:10px;color:#999;margin-top:4px}
+  .flag-strip{display:flex;height:4px;width:60px;margin:8px auto;border-radius:2px;overflow:hidden}
+  .flag-strip .am{flex:2;background:#FCD116}
+  .flag-strip .az{flex:1;background:#003087}
+  .flag-strip .ro{flex:1;background:#CE1126}
+  table{width:100%;border-collapse:collapse;font-size:9px}
+  thead th{background:#003087;color:#FCD116;padding:6px 5px;text-align:center;font-weight:600;font-size:8px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+  thead th:first-child{text-align:left;min-width:120px}
+  tbody tr:nth-child(even){background:#f8f9ff}
+  tbody tr:hover{background:#eef4ff}
+  tbody td{padding:5px 5px;border-bottom:1px solid #e8ecf5;vertical-align:middle;text-align:center}
+  tbody td:first-child{text-align:left;font-weight:500;font-size:9px}
+  .clf{font-weight:600;font-size:9px}
+  .clf-win{color:#003087}
+  .clf-pen{color:#CE1126}
+  .clf-wrong{color:#999}
+  .score{font-size:9px;color:#444}
+  .score-wrong{color:#bbb}
+  .pen-lbl{font-size:7px;color:#CE1126}
+  .b4{background:#FCD116;color:#003087;border-radius:4px;padding:1px 4px;font-size:7px;font-weight:700}
+  .b2{background:#dbeafe;color:#1e40af;border-radius:4px;padding:1px 4px;font-size:7px;font-weight:700}
+  .b0{background:#fee2e2;color:#dc2626;border-radius:4px;padding:1px 4px;font-size:7px;font-weight:700}
+  .empty{color:#ccc}
+  .footer{margin-top:16px;text-align:center;font-size:9px;color:#999;border-top:1px solid #eee;padding-top:12px}
+  @media print{
+    body{padding:12px}
+    .header{margin-bottom:12px}
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🏆 Polla Mundialista 2026</h1>
+  <div class="flag-strip"><div class="am"></div><div class="az"></div><div class="ro"></div></div>
+  <div class="sub">${title} · Familia Güiza Velasco</div>
+  <div class="fecha">Generado el ${now}</div>
+</div>
+${tableEl.outerHTML}
+<div class="footer">Polla Mundialista 2026 · Familia Güiza Velasco · silviapabon24.github.io/mundial-2026-familia</div>
+</body>
+</html>`);
+  printWin.document.close();
+  printWin.focus();
+  setTimeout(()=>{
+    printWin.print();
+  }, 500);
+}
+
+// ── DOWNLOAD IMAGE ────────────────────────────────────
+async function downloadImage(tableId, filename){
+  const el = document.getElementById(tableId);
+  if(!el){ alert('No hay datos aún'); return; }
+
+  const now = new Date().toLocaleString('es-CO',{
+    day:'2-digit',month:'short',year:'numeric',
+    hour:'2-digit',minute:'2-digit'
+  });
+
+  // Create wrapper with header
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'background:#03060f;padding:24px;display:inline-block;min-width:'+el.scrollWidth+'px;font-family:Inter,sans-serif';
+
+  // Header
+  const header = document.createElement('div');
+  header.style.cssText = 'text-align:center;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid #FCD116';
+  header.innerHTML = `
+    <div style="font-family:Bebas Neue,sans-serif;font-size:28px;color:#FCD116;letter-spacing:.06em">POLLA MUNDIALISTA 2026</div>
+    <div style="display:flex;height:3px;width:60px;margin:6px auto;border-radius:2px;overflow:hidden">
+      <div style="flex:2;background:#FCD116"></div><div style="flex:1;background:#003087"></div><div style="flex:1;background:#CE1126"></div>
+    </div>
+    <div style="font-size:12px;color:rgba(252,209,22,.6);letter-spacing:.1em;text-transform:uppercase;margin-top:4px">
+      ${filename==='picks-16avos'?'16avos de Final':'Octavos de Final'} · Familia Güiza Velasco
+    </div>
+    <div style="font-size:10px;color:#3d4e6e;margin-top:3px">${now}</div>`;
+  wrapper.appendChild(header);
+
+  // Clone table
+  const clone = el.cloneNode(true);
+  clone.style.overflow = 'visible';
+  clone.style.borderRadius = '8px';
+  wrapper.appendChild(clone);
+
+  // Footer
+  const footer = document.createElement('div');
+  footer.style.cssText = 'text-align:center;margin-top:12px;font-size:9px;color:#3d4e6e;letter-spacing:.06em';
+  footer.textContent = 'silviapabon24.github.io/mundial-2026-familia';
+  wrapper.appendChild(footer);
+
+  // Append to body temporarily (hidden)
+  wrapper.style.position = 'fixed';
+  wrapper.style.top = '-9999px';
+  wrapper.style.left = '-9999px';
+  document.body.appendChild(wrapper);
+
+  try{
+    const canvas = await html2canvas(wrapper, {
+      scale: 2,
+      backgroundColor: '#03060f',
+      useCORS: true,
+      logging: false,
+      width: wrapper.scrollWidth,
+      height: wrapper.scrollHeight,
+    });
+    const link = document.createElement('a');
+    link.download = filename+'-'+new Date().toISOString().slice(0,10)+'.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }catch(e){
+    alert('Error al generar imagen: '+e.message);
+  }finally{
+    document.body.removeChild(wrapper);
+  }
+}
 </script>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Polla Mundialista 2026 · Familia Güiza</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -281,12 +421,18 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
   <!-- PICKS 16AVOS (solo lectura) -->
   <div class="panel" id="panel-picks16">
-    <div class="eyebrow">
-      <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Picks 16avos · Cerrado</span>
-      <div class="eyebrow-line"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+      <div class="eyebrow" style="margin-bottom:0;flex:1">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">Picks 16avos · Cerrado</span>
+        <div class="eyebrow-line"></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="ref-btn" onclick="printPicks('16avos')">⬇ PDF</button>
+        <button class="ref-btn" onclick="downloadImage('picks16-table','picks-16avos')">⬇ Imagen</button>
+      </div>
     </div>
-    <div class="tbl-wrap">
+    <div class="tbl-wrap" id="picks16-table">
       <table><thead id="thead16b"></thead><tbody id="tbody16b"></tbody></table>
     </div>
   </div>
@@ -311,12 +457,18 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
       <div class="sync-bar" id="oct-sbar"></div>
     </div>
 
-    <div class="eyebrow" style="margin-top:2rem">
-      <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Pronósticos octavos — todos</span>
-      <div class="eyebrow-line"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2rem;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+      <div class="eyebrow" style="margin-bottom:0;flex:1">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">Pronósticos octavos — todos</span>
+        <div class="eyebrow-line"></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="ref-btn" onclick="printPicks('octavos')">⬇ PDF</button>
+        <button class="ref-btn" onclick="downloadImage('picks-oct-table','picks-octavos')">⬇ Imagen</button>
+      </div>
     </div>
-    <div class="tbl-wrap">
+    <div class="tbl-wrap" id="picks-oct-table">
       <table><thead id="thead-oct"></thead><tbody id="tbody-oct"></tbody></table>
     </div>
   </div>
@@ -807,6 +959,79 @@ setTimeout(()=>{
   const bu=document.getElementById('bracket-updated');
   if(bw&&bu){try{buildBK(KNOWN);bu.textContent='Actualizado · '+new Date().toLocaleString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}catch(e){}}
 },200);
+
+// ── PRINT PDF ─────────────────────────────────────────
+function printPicks(fase){
+  const tableId = fase==='16avos' ? 'picks16-table' : 'picks-oct-table';
+  const tableEl = document.getElementById(tableId);
+  if(!tableEl) return;
+
+  const title = fase==='16avos' ? 'Picks 16avos de Final' : 'Picks Octavos de Final';
+  const now = new Date().toLocaleString('es-CO', {
+    day:'2-digit', month:'long', year:'numeric',
+    hour:'2-digit', minute:'2-digit'
+  });
+
+  const printWin = window.open('','_blank');
+  printWin.document.write(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>${title} · Polla Mundial 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#fff;color:#111;padding:24px;font-size:11px}
+  .header{text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #FCD116}
+  .header h1{font-size:20px;font-weight:700;color:#003087;margin-bottom:4px}
+  .header .sub{font-size:11px;color:#666}
+  .header .fecha{font-size:10px;color:#999;margin-top:4px}
+  .flag-strip{display:flex;height:4px;width:60px;margin:8px auto;border-radius:2px;overflow:hidden}
+  .flag-strip .am{flex:2;background:#FCD116}
+  .flag-strip .az{flex:1;background:#003087}
+  .flag-strip .ro{flex:1;background:#CE1126}
+  table{width:100%;border-collapse:collapse;font-size:9px}
+  thead th{background:#003087;color:#FCD116;padding:6px 5px;text-align:center;font-weight:600;font-size:8px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+  thead th:first-child{text-align:left;min-width:120px}
+  tbody tr:nth-child(even){background:#f8f9ff}
+  tbody tr:hover{background:#eef4ff}
+  tbody td{padding:5px 5px;border-bottom:1px solid #e8ecf5;vertical-align:middle;text-align:center}
+  tbody td:first-child{text-align:left;font-weight:500;font-size:9px}
+  .clf{font-weight:600;font-size:9px}
+  .clf-win{color:#003087}
+  .clf-pen{color:#CE1126}
+  .clf-wrong{color:#999}
+  .score{font-size:9px;color:#444}
+  .score-wrong{color:#bbb}
+  .pen-lbl{font-size:7px;color:#CE1126}
+  .b4{background:#FCD116;color:#003087;border-radius:4px;padding:1px 4px;font-size:7px;font-weight:700}
+  .b2{background:#dbeafe;color:#1e40af;border-radius:4px;padding:1px 4px;font-size:7px;font-weight:700}
+  .b0{background:#fee2e2;color:#dc2626;border-radius:4px;padding:1px 4px;font-size:7px;font-weight:700}
+  .empty{color:#ccc}
+  .footer{margin-top:16px;text-align:center;font-size:9px;color:#999;border-top:1px solid #eee;padding-top:12px}
+  @media print{
+    body{padding:12px}
+    .header{margin-bottom:12px}
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🏆 Polla Mundialista 2026</h1>
+  <div class="flag-strip"><div class="am"></div><div class="az"></div><div class="ro"></div></div>
+  <div class="sub">${title} · Familia Güiza Velasco</div>
+  <div class="fecha">Generado el ${now}</div>
+</div>
+${tableEl.outerHTML}
+<div class="footer">Polla Mundialista 2026 · Familia Güiza Velasco · silviapabon24.github.io/mundial-2026-familia</div>
+</body>
+</html>`);
+  printWin.document.close();
+  printWin.focus();
+  setTimeout(()=>{
+    printWin.print();
+  }, 500);
+}
 </script>
 </body>
 </html>
