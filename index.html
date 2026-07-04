@@ -380,17 +380,16 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
 <div class="nav-wrap">
   <div class="nav-pill">
-    <button onclick="showPanel('ranking',this)">Ranking</button>
+    <button class="active" onclick="showPanel('ranking',this)">Ranking</button>
     <button onclick="showPanel('picks16',this)">16avos</button>
-    <button class="active" onclick="showPanel('picks-oct',this)">Octavos</button>
     <button onclick="showPanel('bracket',this)">Llaves</button>
   </div>
 </div>
 
 <main>
 
-  <!-- RANKING -->
-  <div class="panel" id="panel-ranking">
+    <!-- RANKING -->
+  <div class="panel active" id="panel-ranking">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
         <div class="eyebrow-line"></div>
@@ -404,7 +403,16 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
     <div class="eyebrow" style="margin-top:2.5rem">
       <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Pronósticos de todos — 16avos</span>
+      <span class="eyebrow-text">Pronósticos Octavos — todos</span>
+      <div class="eyebrow-line"></div>
+    </div>
+    <div class="tbl-wrap" style="margin-bottom:2rem" id="picks-oct-table-home">
+      <table><thead id="thead-oct-home"></thead><tbody id="tbody-oct-home"></tbody></table>
+    </div>
+
+    <div class="eyebrow" style="margin-top:1.5rem">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">Pronósticos 16avos — todos</span>
       <div class="eyebrow-line"></div>
     </div>
     <div class="tbl-wrap" style="margin-bottom:2rem">
@@ -437,30 +445,12 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
     </div>
   </div>
 
-  <!-- PICKS OCTAVOS -->
-  <div class="panel active" id="panel-picks-oct">
-    <div class="eyebrow">
-      <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Picks Octavos de final</span>
-      <div class="eyebrow-line"></div>
-    </div>
-    <div class="cierre-bar">⏰ Cierre: Sáb 4 jul · 12:30pm hora Colombia</div>
-    <div class="who-bar">
-      <label>¿Quién eres?</label>
-      <select id="psel-oct" onchange="onNameSelect()">
-        <option value="">— Elige tu nombre —</option>
-      </select>
-    </div>
-    <div id="oct-form"></div>
-    <div style="padding:1.5rem 0 1rem;text-align:center">
-      <button class="save-btn" id="oct-save-btn" onclick="saveOctavos()">💾 Guardar mis picks de octavos</button>
-      <div class="sync-bar" id="oct-sbar"></div>
-    </div>
-
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2rem;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+    <!-- PICKS OCTAVOS -->
+  <div class="panel" id="panel-picks-oct">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
         <div class="eyebrow-line"></div>
-        <span class="eyebrow-text">Pronósticos octavos — todos</span>
+        <span class="eyebrow-text">Picks Octavos de final</span>
         <div class="eyebrow-line"></div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0">
@@ -555,24 +545,26 @@ let RESULTS={
 };
 
 // ── RESULTADOS OCTAVOS ───────────────────────────────────
-let RESULTS_OCT={};
+let RESULTS_OCT={1:{clf:'Marruecos',s1:3,s2:0,isPen:false}};
 
 let allData={}, allDataOct={}, octPicks={};
 
 // ── PUNTOS ───────────────────────────────────────────────
-function calcPts(pk, res){
+function calcPts(pk, res, fase){
   if(!pk||!res||!pk.clf||!res.clf) return null;
+  const pts_clf = fase==='oct' ? 3 : 2;
+  const pts_exact = fase==='oct' ? 6 : 4;
   if(pk.clf!==res.clf) return 0;
-  if(res.isPen) return(pk.s1===res.s1&&pk.s2===res.s2&&pk.isPen)?4:2;
-  return(pk.s1===res.s1&&pk.s2===res.s2&&!pk.isPen)?4:2;
+  if(res.isPen) return(pk.s1===res.s1&&pk.s2===res.s2&&pk.isPen)?pts_exact:pts_clf;
+  return(pk.s1===res.s1&&pk.s2===res.s2&&!pk.isPen)?pts_exact:pts_clf;
 }
 function totalPts16(p){let t=0;MS.forEach(m=>{const pts=calcPts((allData[p]||{})[m.id],RESULTS[m.id]);if(pts)t+=pts;});return t;}
-function totalPtsOct(p){let t=0;MS_OCT.forEach(m=>{const pts=calcPts((allDataOct[p]||{})[m.id],RESULTS_OCT[m.id]);if(pts)t+=pts;});return t;}
+function totalPtsOct(p){let t=0;MS_OCT.forEach(m=>{const pts=calcPts((allDataOct[p]||{})[m.id],RESULTS_OCT[m.id],'oct');if(pts)t+=pts;});return t;}
 function totalPts(p){return totalPts16(p)+totalPtsOct(p);}
 
 // ── RANKING ──────────────────────────────────────────────
 function buildRanking(){
-  const lastMatch='Colombia 1-0 Ghana · Vie 3 jul · 16 de 16 partidos — Fase completada ✓';
+  const lastMatch='Colombia 1-0 Ghana · 16avos completados ✓ · Octavos: Marruecos 3-0 Canadá';
   const el=document.getElementById('last-updated');
   if(el) el.textContent='Puntos actualizados con: '+lastMatch;
 
@@ -605,6 +597,7 @@ function buildRanking(){
 
   buildTabla16('thead16','tbody16');
   buildResultados();
+  buildOctTablaById('thead-oct-home','tbody-oct-home');
 }
 
 // ── TABLA 16AVOS ─────────────────────────────────────────
@@ -632,7 +625,7 @@ function buildTabla16(theadId,tbodyId){
       const isPen=pk.isPen===true||(hasS&&s1n===s2n);
       const sc=hasS?`${s1n} - ${s2n}`:(pk.score?.match(/^\d+-\d+$/)?pk.score.replace('-',' - '):'');
       const wrong=pts===0;
-      const badge=pts===4?'<div><span class="badge b4">+4</span></div>':pts===2?'<div><span class="badge b2">+2</span></div>':pts===0?'<div><span class="badge b0">✗</span></div>':'';
+      const badge=pts===6?'<div><span class="badge b4">+6</span></div>':pts===3?'<div><span class="badge b2">+3</span></div>':pts===0?'<div><span class="badge b0">✗</span></div>':'';
       return`<td><div class="pick-clf${isPen?' pen':''}${wrong?' wrong':''}">${pk.clf}</div><div class="pick-score${wrong?' wrong':''}">${sc}</div>${isPen?'<div class="pick-pen">penales</div>':''}${badge}</td>`;
     }).join('');
     tr.innerHTML=pc+cells;tb.appendChild(tr);
@@ -821,6 +814,33 @@ async function saveOctavos(){
 }
 
 // ── TABLA OCTAVOS ────────────────────────────────────────
+function buildOctTablaById(theadId, tbodyId){
+  const sn=n=>{const p=n.split(' ');return p[0].length>7?p[0]:p[0]+' '+p[1]?.charAt(0)+'.'};
+  const thead=document.getElementById(theadId);
+  const tb=document.getElementById(tbodyId);
+  if(!thead||!tb) return;
+  thead.innerHTML=`<tr><th class="col-p">Partido</th>${PARTS.map(p=>`<th>${sn(p)}</th>`).join('')}</tr>`;
+  tb.innerHTML='';
+  MS_OCT.forEach(m=>{
+    const res=RESULTS_OCT[m.id];
+    const tr=document.createElement('tr');
+    const pc=`<td class="col-p"><span class="pname">${m.eq1} vs ${m.eq2}</span><div class="pdate">${m.date}${res?' · <span style="color:var(--am);font-weight:600">'+res.clf+' '+res.s1+'-'+res.s2+'</span>':''}</div></td>`;
+    const cells=PARTS.map(p=>{
+      const pk=(allDataOct[p]||{})[m.id];
+      if(!pk?.clf) return`<td><div class="pick-empty">—</div></td>`;
+      const pts=calcPts(pk,res,'oct');
+      const hasS=pk.s1!==null&&pk.s1!==undefined&&pk.s2!==null&&pk.s2!==undefined;
+      const s1n=hasS?Number(pk.s1):null,s2n=hasS?Number(pk.s2):null;
+      const isPen=pk.isPen===true||(hasS&&s1n===s2n);
+      const sc=hasS?`${s1n} - ${s2n}`:(pk.score?.match(/^\d+-\d+$/)?pk.score.replace('-',' - '):'');
+      const wrong=pts===0;
+      const badge=pts===6?'<div><span class="badge b4">+6</span></div>':pts===3?'<div><span class="badge b2">+3</span></div>':pts===0?'<div><span class="badge b0">✗</span></div>':'';
+      return`<td><div class="pick-clf${isPen?' pen':''}${wrong?' wrong':''}">${pk.clf}</div><div class="pick-score${wrong?' wrong':''}">${sc}</div>${isPen?'<div class="pick-pen">penales</div>':''}${badge}</td>`;
+    }).join('');
+    tr.innerHTML=pc+cells;tb.appendChild(tr);
+  });
+}
+
 function buildOctTabla(){
   const sn=n=>{const p=n.split(' ');return p[0].length>7?p[0]:p[0]+' '+p[1]?.charAt(0)+'.'};
   document.getElementById('thead-oct').innerHTML=`<tr><th class="col-p">Partido</th>${PARTS.map(p=>`<th>${sn(p)}</th>`).join('')}</tr>`;
@@ -838,7 +858,7 @@ function buildOctTabla(){
       const isPen=pk.isPen===true||(hasS&&s1n===s2n);
       const sc=hasS?`${s1n} - ${s2n}`:(pk.score?.match(/^\d+-\d+$/)?pk.score.replace('-',' - '):'');
       const wrong=pts===0;
-      const badge=pts===4?'<div><span class="badge b4">+4</span></div>':pts===2?'<div><span class="badge b2">+2</span></div>':pts===0?'<div><span class="badge b0">✗</span></div>':'';
+      const badge=pts===6?'<div><span class="badge b4">+6</span></div>':pts===3?'<div><span class="badge b2">+3</span></div>':pts===0?'<div><span class="badge b0">✗</span></div>':'';
       return`<td><div class="pick-clf${isPen?' pen':''}${wrong?' wrong':''}">${pk.clf}</div><div class="pick-score${wrong?' wrong':''}">${sc}</div>${isPen?'<div class="pick-pen">penales</div>':''}${badge}</td>`;
     }).join('');
     tr.innerHTML=pc+cells;tb.appendChild(tr);
@@ -860,7 +880,6 @@ async function refreshData(){
   buildTabla16('thead16','tbody16');
   buildTabla16('thead16b','tbody16b');
   buildOctTabla();
-  buildOctForm();
   // Fetch Sheets in background — update silently when done
   Promise.all([fetchData(), fetchOctData()]).then(()=>{
     buildRanking();
@@ -886,7 +905,7 @@ const FLAGS={'South Africa':'https://flagcdn.com/w40/za.png','Canada':'https://f
 const ES={'South Africa':'Sudáfrica','Canada':'Canadá','Germany':'Alemania','Paraguay':'Paraguay','Netherlands':'P. Bajos','Morocco':'Marruecos','Brazil':'Brasil','Japan':'Japón','France':'Francia','Sweden':'Suecia','Ivory Coast':'C. de Marfil','Norway':'Noruega','Mexico':'México','Ecuador':'Ecuador','England':'Inglaterra','Congo DR':'RD Congo','USA':'EE.UU.','Bosnia and Herzegovina':'Bosnia','Belgium':'Bélgica','Senegal':'Senegal','Portugal':'Portugal','Croatia':'Croacia','Spain':'España','Austria':'Austria','Switzerland':'Suiza','Algeria':'Argelia','Argentina':'Argentina','Cape Verde':'Cabo Verde','Colombia':'Colombia','Ghana':'Ghana','Australia':'Australia','Egypt':'Egipto'};
 const R16_ORDER=[['South Africa','Canada'],['Germany','Paraguay'],['Netherlands','Morocco'],['Brazil','Japan'],['France','Sweden'],['Ivory Coast','Norway'],['Mexico','Ecuador'],['England','Congo DR'],['USA','Bosnia and Herzegovina'],['Belgium','Senegal'],['Portugal','Croatia'],['Spain','Austria'],['Switzerland','Algeria'],['Argentina','Cape Verde'],['Colombia','Ghana'],['Australia','Egypt']];
 const DATES=['Dom 28 jun','Lun 29 jun','Lun 29 jun','Lun 29 jun','Mar 30 jun','Mar 30 jun','Mar 30 jun','Mié 1 jul','Mié 1 jul','Mié 1 jul','Jue 2 jul','Jue 2 jul','Jue 2 jul','Vie 3 jul','Vie 3 jul','Vie 3 jul'];
-const KNOWN={'South Africa|Canada':{s1:0,s2:1,done:true},'Brazil|Japan':{s1:2,s2:1,done:true},'Germany|Paraguay':{s1:1,s2:1,done:true,pen:'Paraguay'},'Netherlands|Morocco':{s1:1,s2:1,done:true,pen:'Morocco'},'Ivory Coast|Norway':{s1:1,s2:2,done:true},'France|Sweden':{s1:3,s2:0,done:true},'Mexico|Ecuador':{s1:2,s2:0,done:true},'England|Congo DR':{s1:2,s2:1,done:true},'Belgium|Senegal':{s1:3,s2:2,done:true},'USA|Bosnia and Herzegovina':{s1:2,s2:0,done:true},'Spain|Austria':{s1:3,s2:0,done:true},'Portugal|Croatia':{s1:2,s2:1,done:true},'Switzerland|Algeria':{s1:2,s2:0,done:true},'Argentina|Cape Verde':{s1:3,s2:2,done:true},'Australia|Egypt':{s1:1,s2:1,done:true,pen:'Egypt'},'Colombia|Ghana':{s1:1,s2:0,done:true}};
+const KNOWN={'South Africa|Canada':{s1:0,s2:1,done:true},'Brazil|Japan':{s1:2,s2:1,done:true},'Germany|Paraguay':{s1:1,s2:1,done:true,pen:'Paraguay'},'Netherlands|Morocco':{s1:1,s2:1,done:true,pen:'Morocco'},'Ivory Coast|Norway':{s1:1,s2:2,done:true},'France|Sweden':{s1:3,s2:0,done:true},'Mexico|Ecuador':{s1:2,s2:0,done:true},'England|Congo DR':{s1:2,s2:1,done:true},'Belgium|Senegal':{s1:3,s2:2,done:true},'USA|Bosnia and Herzegovina':{s1:2,s2:0,done:true},'Spain|Austria':{s1:3,s2:0,done:true},'Portugal|Croatia':{s1:2,s2:1,done:true},'Switzerland|Algeria':{s1:2,s2:0,done:true},'Argentina|Cape Verde':{s1:3,s2:2,done:true},'Australia|Egypt':{s1:1,s2:1,done:true,pen:'Egypt'},'Colombia|Ghana':{s1:1,s2:0,done:true},'Morocco|Canada':{s1:3,s2:0,done:true}};
 
 function tbox(name,score,status){
   const f=FLAGS[name],n=ES[name]||name,sc=score!==null&&score!==undefined?score:'';
