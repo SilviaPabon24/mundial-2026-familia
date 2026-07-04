@@ -881,26 +881,31 @@ function buildOctTabla(){
 // ── SYNC ─────────────────────────────────────────────────
 function setSbar(id,t,m){const e=document.getElementById(id);if(!e)return;e.style.display='block';e.innerHTML=`<span class="dot ${t}"></span>${m}`;}
 
-async function fetchData(){
-  try{const r=await fetch(URL_GS+'?t='+Date.now());const j=await r.json();if(j.status==='ok')allData=j.data||{};}catch(e){}
+function fetchWithTimeout(url, ms=5000){
+  return Promise.race([
+    fetch(url).then(r=>r.json()),
+    new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))
+  ]);
 }
-async function fetchOctData(){
-  try{const r=await fetch(URL_GS+'?fase=octavos&t='+Date.now());const j=await r.json();if(j.status==='ok')allDataOct=j.data||{};}catch(e){}
+async function fetchAllData(){
+  try{
+    const [j16, joct] = await Promise.all([
+      fetchWithTimeout(URL_GS+'?t='+Date.now()),
+      fetchWithTimeout(URL_GS+'?fase=octavos&t='+Date.now())
+    ]);
+    if(j16.status==='ok') allData=j16.data||{};
+    if(joct.status==='ok') allDataOct=joct.data||{};
+  }catch(e){}
 }
-async function refreshData(){
-  // Render immediately — no waiting
+function renderAll(){
   buildRanking();
   buildTabla16('thead16','tbody16');
   buildTabla16('thead16b','tbody16b');
   buildOctTabla();
-  // Fetch Sheets in background — update silently when done
-  Promise.all([fetchData(), fetchOctData()]).then(()=>{
-    buildRanking();
-    buildTabla16('thead16','tbody16');
-    buildTabla16('thead16b','tbody16b');
-    buildOctTabla();
-    buildOctForm();
-  }).catch(()=>{});
+}
+async function refreshData(){
+  renderAll();
+  fetchAllData().then(()=>renderAll()).catch(()=>{});
 }
 
 // ── PANELS ───────────────────────────────────────────────
