@@ -230,9 +230,9 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
 <div class="nav-wrap">
   <div class="nav-pill">
-    <button class="active" onclick="showPanel('ranking',this)">Ranking</button>
+    <button onclick="showPanel('ranking',this)">Ranking</button>
     <button onclick="showPanel('picks16',this)">16avos</button>
-    <button onclick="showPanel('picks-oct',this)">Octavos</button>
+    <button class="active" onclick="showPanel('picks-oct',this)">Octavos</button>
     <button onclick="showPanel('bracket',this)">Llaves</button>
   </div>
 </div>
@@ -240,7 +240,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 <main>
 
   <!-- RANKING -->
-  <div class="panel active" id="panel-ranking">
+  <div class="panel" id="panel-ranking">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
         <div class="eyebrow-line"></div>
@@ -282,7 +282,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
   </div>
 
   <!-- PICKS OCTAVOS -->
-  <div class="panel" id="panel-picks-oct">
+  <div class="panel active" id="panel-picks-oct">
     <div class="eyebrow">
       <div class="eyebrow-line"></div>
       <span class="eyebrow-text">Picks Octavos de final</span>
