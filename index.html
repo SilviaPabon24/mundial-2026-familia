@@ -695,9 +695,11 @@ async function fetchOctData(){
   try{const r=await fetch(URL_GS+'?fase=octavos&t='+Date.now());const j=await r.json();if(j.status==='ok')allDataOct=j.data||{};}catch(e){}
 }
 async function refreshData(){
-  buildRanking();buildTabla16('thead16b','tbody16b');buildOctTabla();
+  buildRanking();
+  buildTabla16('thead16b','tbody16b');buildOctTabla();
   await Promise.all([fetchData(),fetchOctData()]);
   buildRanking();buildTabla16('thead16','tbody16');buildTabla16('thead16b','tbody16b');buildOctTabla();
+  buildOctForm();
 }
 
 // ── PANELS ───────────────────────────────────────────────
@@ -780,10 +782,8 @@ function buildBK(known){
 buildRanking();
 buildTabla16('thead16b','tbody16b');
 buildOctTabla();
-// Load oct data first, then build form so saved names are excluded
-refreshData().then(()=>{
-  buildOctForm();
-});
+buildOctForm();
+refreshData();
 // Pre-render bracket
 setTimeout(()=>{
   const bw=document.getElementById('bracket-wrap');
