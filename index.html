@@ -155,6 +155,8 @@ tbody tr:hover td.col-p{background:rgba(14,22,44,.98)}
 .goal-input{width:62px;height:62px;background:var(--bg2);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:34px;font-weight:700;font-family:'Bebas Neue',sans-serif;text-align:center;-moz-appearance:textfield;appearance:textfield;cursor:pointer;transition:border-color .2s,background .2s}
 .goal-input::-webkit-outer-spin-button,.goal-input::-webkit-inner-spin-button{-webkit-appearance:none}
 .goal-input:focus{outline:none;border-color:var(--am);background:#182040}
+.goal-input:disabled{opacity:.25;cursor:not-allowed;border-color:var(--border)}
+.pen-btn:disabled{opacity:.25;cursor:not-allowed}
 .team-col.winner .goal-input{border-color:var(--am);background:rgba(252,209,22,.08);color:var(--am)}
 .team-col.winner-pen .goal-input{border-color:#ff8090;background:rgba(206,17,38,.08);color:#ff8090}
 .vs-center{text-align:center;font-size:11px;font-weight:700;color:var(--text3)}
@@ -291,7 +293,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
     <div class="cierre-bar">⏰ Cierre: Sáb 4 jul · 12:30pm hora Colombia</div>
     <div class="who-bar">
       <label>¿Quién eres?</label>
-      <select id="psel-oct" onchange="loadOctPicks()">
+      <select id="psel-oct" onchange="onNameSelect()">
         <option value="">— Elige tu nombre —</option>
       </select>
     </div>
@@ -526,6 +528,8 @@ function buildOctForm(){
       </div>`;
     form.appendChild(d);
   });
+  // Disable inputs until name is selected
+  setTimeout(()=>setOctInputsDisabled(true), 50);
 }
 
 function onOctScore(id){
@@ -592,6 +596,47 @@ function loadOctPicks(){
       if(lp.clf===m.eq1)tc1.classList.add('winner');else tc2.classList.add('winner');
     }
   });
+}
+
+function setOctInputsDisabled(disabled){
+  MS_OCT.forEach(m=>{
+    const s1=document.getElementById('oct-s1-'+m.id);
+    const s2=document.getElementById('oct-s2-'+m.id);
+    const pb1=document.getElementById('oct-pb1-'+m.id);
+    const pb2=document.getElementById('oct-pb2-'+m.id);
+    if(s1) s1.disabled=disabled;
+    if(s2) s2.disabled=disabled;
+    if(pb1) pb1.disabled=disabled;
+    if(pb2) pb2.disabled=disabled;
+  });
+  const btn=document.getElementById('oct-save-btn');
+  if(btn) btn.disabled=disabled;
+}
+
+function onNameSelect(){
+  const me=document.getElementById('psel-oct').value;
+  if(!me){
+    setOctInputsDisabled(true);
+    octPicks={};
+    // Reset all inputs
+    MS_OCT.forEach(m=>{
+      const s1=document.getElementById('oct-s1-'+m.id);
+      const s2=document.getElementById('oct-s2-'+m.id);
+      const tc1=document.getElementById('oct-tc1-'+m.id);
+      const tc2=document.getElementById('oct-tc2-'+m.id);
+      const pen=document.getElementById('oct-pen-'+m.id);
+      if(s1) s1.value=0;
+      if(s2) s2.value=0;
+      if(tc1){tc1.classList.remove('winner','winner-pen');}
+      if(tc2){tc2.classList.remove('winner','winner-pen');}
+      if(pen) pen.classList.remove('show');
+      const mc=document.getElementById('oct-mc'+m.id);
+      if(mc) mc.className='match-card';
+    });
+  } else {
+    setOctInputsDisabled(false);
+    loadOctPicks();
+  }
 }
 
 async function saveOctavos(){
