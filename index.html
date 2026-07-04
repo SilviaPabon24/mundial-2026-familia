@@ -703,18 +703,20 @@ async function fetchOctData(){
   try{const r=await fetch(URL_GS+'?fase=octavos&t='+Date.now());const j=await r.json();if(j.status==='ok')allDataOct=j.data||{};}catch(e){}
 }
 async function refreshData(){
-  // Render immediately with local data
-  buildRanking();
-  buildTabla16('thead16','tbody16');
-  buildTabla16('thead16b','tbody16b');
-  buildOctTabla();
-  // Then fetch from Sheets and re-render
-  await Promise.all([fetchData(), fetchOctData()]);
+  // Render immediately — no waiting
   buildRanking();
   buildTabla16('thead16','tbody16');
   buildTabla16('thead16b','tbody16b');
   buildOctTabla();
   buildOctForm();
+  // Fetch Sheets in background — update silently when done
+  Promise.all([fetchData(), fetchOctData()]).then(()=>{
+    buildRanking();
+    buildTabla16('thead16','tbody16');
+    buildTabla16('thead16b','tbody16b');
+    buildOctTabla();
+    buildOctForm();
+  }).catch(()=>{});
 }
 
 // ── PANELS ───────────────────────────────────────────────
