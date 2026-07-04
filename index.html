@@ -630,6 +630,19 @@ function buildTabla16(theadId,tbodyId){
     }).join('');
     tr.innerHTML=pc+cells;tb.appendChild(tr);
   });
+
+  // Fila de totales
+  const totalRow=document.createElement('tr');
+  totalRow.style.cssText='background:rgba(252,209,22,.04);border-top:2px solid rgba(252,209,22,.2)';
+  const totalCells=PARTS.map(p=>{
+    const total=MS.reduce((sum,m)=>{
+      const pts=calcPts((allData[p]||{})[m.id],RESULTS[m.id]);
+      return sum+(pts||0);
+    },0);
+    return`<td style="text-align:center;padding:8px 10px"><span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--am)">${total}</span><div style="font-size:8px;color:var(--text3);letter-spacing:.08em">pts</div></td>`;
+  }).join('');
+  totalRow.innerHTML=`<td class="col-p" style="font-size:11px;font-weight:700;color:var(--am);letter-spacing:.06em;padding:8px 10px">TOTAL 16AVOS</td>${totalCells}`;
+  tb.appendChild(totalRow);
 }
 
 // ── RESULTADOS ───────────────────────────────────────────
