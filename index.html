@@ -779,9 +779,11 @@ function buildBK(known){
 // ── INIT ─────────────────────────────────────────────────
 buildRanking();
 buildTabla16('thead16b','tbody16b');
-buildOctForm();
 buildOctTabla();
-refreshData();
+// Load oct data first, then build form so saved names are excluded
+refreshData().then(()=>{
+  buildOctForm();
+});
 // Pre-render bracket
 setTimeout(()=>{
   const bw=document.getElementById('bracket-wrap');
