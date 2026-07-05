@@ -545,7 +545,7 @@ let RESULTS={
 };
 
 // ── RESULTADOS OCTAVOS ───────────────────────────────────
-let RESULTS_OCT={1:{clf:'Marruecos',s1:3,s2:0,isPen:false}};
+let RESULTS_OCT={1:{clf:'Marruecos',s1:3,s2:0,isPen:false},2:{clf:'Francia',s1:1,s2:0,isPen:false}};
 
 let allData={}, allDataOct={}, octPicks={};
 
@@ -820,7 +820,7 @@ async function saveOctavos(){
   try{
     const r=await fetch(URL_GS,{method:'POST',body:JSON.stringify({participant:me,picks:octPicks,fase:'octavos'})});
     const j=await r.json();
-    if(j.status==='ok'){setSbar('oct-sbar','ok','¡Guardado! ✓');await fetchOctData();buildOctTabla();buildOctForm();}
+    if(j.status==='ok'){setSbar('oct-sbar','ok','¡Guardado! ✓');await fetchAllData();buildOctTabla();buildOctForm();}
     else throw new Error(j.message);
   }catch(e){setSbar('oct-sbar','err','Error al guardar');}
   finally{btn.disabled=false;btn.textContent='💾 Guardar mis picks de octavos';}
@@ -881,7 +881,7 @@ function buildOctTabla(){
 // ── SYNC ─────────────────────────────────────────────────
 function setSbar(id,t,m){const e=document.getElementById(id);if(!e)return;e.style.display='block';e.innerHTML=`<span class="dot ${t}"></span>${m}`;}
 
-function fetchWithTimeout(url, ms=5000){
+function fetchWithTimeout(url, ms=6000){
   return Promise.race([
     fetch(url).then(r=>r.json()),
     new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))
@@ -893,19 +893,21 @@ async function fetchAllData(){
       fetchWithTimeout(URL_GS+'?t='+Date.now()),
       fetchWithTimeout(URL_GS+'?fase=octavos&t='+Date.now())
     ]);
-    if(j16.status==='ok') allData=j16.data||{};
-    if(joct.status==='ok') allDataOct=joct.data||{};
-  }catch(e){}
+    if(j16?.status==='ok') allData=j16.data||{};
+    if(joct?.status==='ok') allDataOct=joct.data||{};
+  }catch(e){console.log('Fetch error:',e.message);}
 }
 function renderAll(){
   buildRanking();
   buildTabla16('thead16','tbody16');
   buildTabla16('thead16b','tbody16b');
   buildOctTabla();
+  buildOctTablaById('thead-oct-home','tbody-oct-home');
 }
 async function refreshData(){
   renderAll();
-  fetchAllData().then(()=>renderAll()).catch(()=>{});
+  await fetchAllData();
+  renderAll();
 }
 
 // ── PANELS ───────────────────────────────────────────────
@@ -923,7 +925,7 @@ const FLAGS={'South Africa':'https://flagcdn.com/w40/za.png','Canada':'https://f
 const ES={'South Africa':'Sudáfrica','Canada':'Canadá','Germany':'Alemania','Paraguay':'Paraguay','Netherlands':'P. Bajos','Morocco':'Marruecos','Brazil':'Brasil','Japan':'Japón','France':'Francia','Sweden':'Suecia','Ivory Coast':'C. de Marfil','Norway':'Noruega','Mexico':'México','Ecuador':'Ecuador','England':'Inglaterra','Congo DR':'RD Congo','USA':'EE.UU.','Bosnia and Herzegovina':'Bosnia','Belgium':'Bélgica','Senegal':'Senegal','Portugal':'Portugal','Croatia':'Croacia','Spain':'España','Austria':'Austria','Switzerland':'Suiza','Algeria':'Argelia','Argentina':'Argentina','Cape Verde':'Cabo Verde','Colombia':'Colombia','Ghana':'Ghana','Australia':'Australia','Egypt':'Egipto'};
 const R16_ORDER=[['South Africa','Canada'],['Germany','Paraguay'],['Netherlands','Morocco'],['Brazil','Japan'],['France','Sweden'],['Ivory Coast','Norway'],['Mexico','Ecuador'],['England','Congo DR'],['USA','Bosnia and Herzegovina'],['Belgium','Senegal'],['Portugal','Croatia'],['Spain','Austria'],['Switzerland','Algeria'],['Argentina','Cape Verde'],['Colombia','Ghana'],['Australia','Egypt']];
 const DATES=['Dom 28 jun','Lun 29 jun','Lun 29 jun','Lun 29 jun','Mar 30 jun','Mar 30 jun','Mar 30 jun','Mié 1 jul','Mié 1 jul','Mié 1 jul','Jue 2 jul','Jue 2 jul','Jue 2 jul','Vie 3 jul','Vie 3 jul','Vie 3 jul'];
-const KNOWN={'South Africa|Canada':{s1:0,s2:1,done:true},'Brazil|Japan':{s1:2,s2:1,done:true},'Germany|Paraguay':{s1:1,s2:1,done:true,pen:'Paraguay'},'Netherlands|Morocco':{s1:1,s2:1,done:true,pen:'Morocco'},'Ivory Coast|Norway':{s1:1,s2:2,done:true},'France|Sweden':{s1:3,s2:0,done:true},'Mexico|Ecuador':{s1:2,s2:0,done:true},'England|Congo DR':{s1:2,s2:1,done:true},'Belgium|Senegal':{s1:3,s2:2,done:true},'USA|Bosnia and Herzegovina':{s1:2,s2:0,done:true},'Spain|Austria':{s1:3,s2:0,done:true},'Portugal|Croatia':{s1:2,s2:1,done:true},'Switzerland|Algeria':{s1:2,s2:0,done:true},'Argentina|Cape Verde':{s1:3,s2:2,done:true},'Australia|Egypt':{s1:1,s2:1,done:true,pen:'Egypt'},'Colombia|Ghana':{s1:1,s2:0,done:true},'Morocco|Canada':{s1:3,s2:0,done:true}};
+const KNOWN={'South Africa|Canada':{s1:0,s2:1,done:true},'Brazil|Japan':{s1:2,s2:1,done:true},'Germany|Paraguay':{s1:1,s2:1,done:true,pen:'Paraguay'},'Netherlands|Morocco':{s1:1,s2:1,done:true,pen:'Morocco'},'Ivory Coast|Norway':{s1:1,s2:2,done:true},'France|Sweden':{s1:3,s2:0,done:true},'Mexico|Ecuador':{s1:2,s2:0,done:true},'England|Congo DR':{s1:2,s2:1,done:true},'Belgium|Senegal':{s1:3,s2:2,done:true},'USA|Bosnia and Herzegovina':{s1:2,s2:0,done:true},'Spain|Austria':{s1:3,s2:0,done:true},'Portugal|Croatia':{s1:2,s2:1,done:true},'Switzerland|Algeria':{s1:2,s2:0,done:true},'Argentina|Cape Verde':{s1:3,s2:2,done:true},'Australia|Egypt':{s1:1,s2:1,done:true,pen:'Egypt'},'Colombia|Ghana':{s1:1,s2:0,done:true},'Morocco|Canada':{s1:3,s2:0,done:true},'France|Paraguay':{s1:1,s2:0,done:true}};
 
 function tbox(name,score,status){
   const f=FLAGS[name],n=ES[name]||name,sc=score!==null&&score!==undefined?score:'';
@@ -985,11 +987,10 @@ function buildBK(known){
 }
 
 // ── INIT ─────────────────────────────────────────────────
-buildRanking();
-buildTabla16('thead16b','tbody16b');
-buildOctTabla();
-buildOctForm();
-refreshData();
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderAll();
+  fetchAllData().then(()=>renderAll());
+});
 // Pre-render bracket
 setTimeout(()=>{
   const bw=document.getElementById('bracket-wrap');
