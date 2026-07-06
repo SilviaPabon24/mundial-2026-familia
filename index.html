@@ -834,7 +834,15 @@ function buildOctTablaById(theadId, tbodyId){
   if(!thead||!tb) return;
   thead.innerHTML=`<tr><th class="col-p">Partido</th>${PARTS.map(p=>`<th>${sn(p)}</th>`).join('')}</tr>`;
   tb.innerHTML='';
-  MS_OCT.forEach(m=>{
+  const pending=MS_OCT.filter(m=>!RESULTS_OCT[m.id]);
+  const played=MS_OCT.filter(m=>RESULTS_OCT[m.id]);
+  const ordered=[...pending,...played];
+  ordered.forEach((m,idx)=>{
+    if(idx===pending.length && played.length>0 && pending.length>0){
+      const sep=document.createElement('tr');sep.className='tbl-sep';
+      sep.innerHTML=`<td colspan="${PARTS.length+1}">Partidos jugados</td>`;
+      tb.appendChild(sep);
+    }
     const res=RESULTS_OCT[m.id];
     const tr=document.createElement('tr');
     const pc=`<td class="col-p"><span class="pname">${m.eq1} vs ${m.eq2}</span><div class="pdate">${m.date}${res?' · <span style="color:var(--am);font-weight:600">'+res.clf+' '+res.s1+'-'+res.s2+'</span>':''}</div></td>`;
