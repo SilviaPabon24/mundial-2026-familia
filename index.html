@@ -181,12 +181,7 @@ function buildQtrTabla(){
     }).join('');
     tr.innerHTML=pc+cells;tb.appendChild(tr);
   });
-  // Show tabla only if someone has registered
-  const section=document.getElementById('qtr-tabla-section');
-  if(section){
-    const hasData=PARTS.some(p=>allDataQtr[p]&&Object.values(allDataQtr[p]).some(pk=>pk.clf&&pk.clf!==''));
-    section.style.display=hasData?'block':'none';
-  }
+
 }
 
 
@@ -663,7 +658,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
       <button class="save-btn" id="qtr-save-btn" onclick="saveQtr()">💾 Guardar mis picks de cuartos</button>
       <div class="sync-bar" id="qtr-sbar"></div>
     </div>
-    <div id="qtr-tabla-section" style="display:none">
+    <div id="qtr-tabla-section">
       <div class="eyebrow" style="margin-top:2rem">
         <div class="eyebrow-line"></div>
         <span class="eyebrow-text">Pronósticos cuartos — todos</span>
@@ -1159,7 +1154,11 @@ const FLAGS={'South Africa':'https://flagcdn.com/w40/za.png','Canada':'https://f
 const ES={'South Africa':'Sudáfrica','Canada':'Canadá','Germany':'Alemania','Paraguay':'Paraguay','Netherlands':'P. Bajos','Morocco':'Marruecos','Brazil':'Brasil','Japan':'Japón','France':'Francia','Sweden':'Suecia','Ivory Coast':'C. de Marfil','Norway':'Noruega','Mexico':'México','Ecuador':'Ecuador','England':'Inglaterra','Congo DR':'RD Congo','USA':'EE.UU.','Bosnia and Herzegovina':'Bosnia','Belgium':'Bélgica','Senegal':'Senegal','Portugal':'Portugal','Croatia':'Croacia','Spain':'España','Austria':'Austria','Switzerland':'Suiza','Algeria':'Argelia','Argentina':'Argentina','Cape Verde':'Cabo Verde','Colombia':'Colombia','Ghana':'Ghana','Australia':'Australia','Egypt':'Egipto'};
 const R16_ORDER=[['South Africa','Canada'],['Germany','Paraguay'],['Netherlands','Morocco'],['Brazil','Japan'],['France','Sweden'],['Ivory Coast','Norway'],['Mexico','Ecuador'],['England','Congo DR'],['USA','Bosnia and Herzegovina'],['Belgium','Senegal'],['Portugal','Croatia'],['Spain','Austria'],['Switzerland','Algeria'],['Argentina','Cape Verde'],['Colombia','Ghana'],['Australia','Egypt']];
 const DATES=['Dom 28 jun','Lun 29 jun','Lun 29 jun','Lun 29 jun','Mar 30 jun','Mar 30 jun','Mar 30 jun','Mié 1 jul','Mié 1 jul','Mié 1 jul','Jue 2 jul','Jue 2 jul','Jue 2 jul','Vie 3 jul','Vie 3 jul','Vie 3 jul'];
-const KNOWN={'South Africa|Canada':{s1:0,s2:1,done:true},'Brazil|Japan':{s1:2,s2:1,done:true},'Germany|Paraguay':{s1:1,s2:1,done:true,pen:'Paraguay'},'Netherlands|Morocco':{s1:1,s2:1,done:true,pen:'Morocco'},'Ivory Coast|Norway':{s1:1,s2:2,done:true},'France|Sweden':{s1:3,s2:0,done:true},'Mexico|Ecuador':{s1:2,s2:0,done:true},'England|Congo DR':{s1:2,s2:1,done:true},'Belgium|Senegal':{s1:3,s2:2,done:true},'USA|Bosnia and Herzegovina':{s1:2,s2:0,done:true},'Spain|Austria':{s1:3,s2:0,done:true},'Portugal|Croatia':{s1:2,s2:1,done:true},'Switzerland|Algeria':{s1:2,s2:0,done:true},'Argentina|Cape Verde':{s1:3,s2:2,done:true},'Australia|Egypt':{s1:1,s2:1,done:true,pen:'Egypt'},'Colombia|Ghana':{s1:1,s2:0,done:true},'Morocco|Canada':{s1:3,s2:0,done:true},'France|Paraguay':{s1:1,s2:0,done:true},'Mexico|England':{s1:2,s2:3,done:true},'Portugal|Spain':{s1:0,s2:1,done:true},'USA|Belgium':{s1:1,s2:4,done:true},'Argentina|Egypt':{s1:3,s2:2,done:true},'Switzerland|Colombia':{s1:0,s2:0,done:true,pen:'Switzerland'}};
+const KNOWN={'South Africa|Canada':{s1:0,s2:1,done:true},'Brazil|Japan':{s1:2,s2:1,done:true},'Germany|Paraguay':{s1:1,s2:1,done:true,pen:'Paraguay'},'Netherlands|Morocco':{s1:1,s2:1,done:true,pen:'Morocco'},'Ivory Coast|Norway':{s1:1,s2:2,done:true},'France|Sweden':{s1:3,s2:0,done:true},'Mexico|Ecuador':{s1:2,s2:0,done:true},'England|Congo DR':{s1:2,s2:1,done:true},'Belgium|Senegal':{s1:3,s2:2,done:true},'USA|Bosnia and Herzegovina':{s1:2,s2:0,done:true},'Spain|Austria':{s1:3,s2:0,done:true},'Portugal|Croatia':{s1:2,s2:1,done:true},'Switzerland|Algeria':{s1:2,s2:0,done:true},'Argentina|Cape Verde':{s1:3,s2:2,done:true},'Australia|Egypt':{s1:1,s2:1,done:true,pen:'Egypt'},'Colombia|Ghana':{s1:1,s2:0,done:true},'Morocco|Canada':{s1:3,s2:0,done:true},'France|Paraguay':{s1:1,s2:0,done:true},'Mexico|England':{s1:2,s2:3,done:true},'Portugal|Spain':{s1:0,s2:1,done:true},'USA|Belgium':{s1:1,s2:4,done:true},'Argentina|Egypt':{s1:3,s2:2,done:true},'Switzerland|Colombia':{s1:0,s2:0,done:true,pen:'Switzerland'},
+  'Morocco|France':{s1:0,s2:0},
+  'Spain|Belgium':{s1:0,s2:0},
+  'Norway|England':{s1:0,s2:0},
+  'Argentina|Switzerland':{s1:0,s2:0}};
 
 function tbox(name,score,status){
   const f=FLAGS[name],n=ES[name]||name,sc=score!==null&&score!==undefined?score:'';
@@ -1200,7 +1199,25 @@ function buildBK(known){
       const l2=lb?(ES[lb[0]]||lb[0])+' / '+(ES[lb[1]]||lb[1]):'?';
       return'<div class="bk-match" style="margin:6px 0">'+(w1?tbox(w1,null,''):tbd(l1))+(w2?tbox(w2,null,''):tbd(l2))+'</div>';
     });
-    const qtr=Array(4).fill(0).map(function(){return'<div class="bk-match" style="margin:24px 0">'+tbd()+tbd()+'</div>';}).join('');
+    // Cuartos pairings from oct winners
+    const QTR_PAIRS=[[0,2],[1,4],[3,5],[6,7]]; // same OCT_PAIRS grouping
+    // But we know the actual cuartos matchups:
+    const qtrMatches=[
+      {eq1:'Marruecos',eq2:'Francia',   k:'Morocco|France'},
+      {eq1:'España',   eq2:'Bélgica',   k:'Spain|Belgium'},
+      {eq1:'Noruega',  eq2:'Inglaterra',k:'Norway|England'},
+      {eq1:'Argentina',eq2:'Suiza',     k:'Argentina|Switzerland'},
+    ];
+    const qtr=qtrMatches.map(function(m){
+      const res=known[m.k];
+      if(res&&res.done){
+        const penW=res.pen||null;
+        const w1=res.s1>res.s2||(res.s1===res.s2&&penW===m.eq1);
+        const w2=res.s2>res.s1||(res.s1===res.s2&&penW===m.eq2);
+        return'<div class="bk-match" style="margin:24px 0">'+tbox(m.eq1,res.s1,w1?'win':w2?'lose':'')+tbox(m.eq2,res.s2,w2?'win':w1?'lose':'')+'</div>';
+      }
+      return'<div class="bk-match" style="margin:24px 0">'+tbox(m.eq1,null,'')+tbox(m.eq2,null,'')+'</div>';
+    }).join('');
     const semi=Array(2).fill(0).map(function(){return'<div class="bk-match" style="margin:76px 0">'+tbd()+tbd()+'</div>';}).join('');
     const fin='<div class="bk-match" style="margin:auto"><div style="font-size:22px;text-align:center;margin-bottom:7px">🏆</div>'+tbd()+tbd()+'</div>';
     document.getElementById('bracket-wrap').innerHTML=
