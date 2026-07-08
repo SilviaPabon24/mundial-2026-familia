@@ -9,7 +9,8 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-6ZJZ70F6D8');
-
+</script>
+<script>
 // ── CUARTOS FORM ─────────────────────────────────────────
 function buildQtrForm(){
   const sel=document.getElementById('psel-qtr');
@@ -149,43 +150,6 @@ async function saveQtr(){
   finally{btn.disabled=false;btn.textContent='💾 Guardar mis picks de cuartos';}
 }
 
-function buildQtrTabla(){
-  const sn=n=>{const p=n.split(' ');return p[0].length>7?p[0]:p[0]+' '+p[1]?.charAt(0)+'.'};
-  const thead=document.getElementById('thead-qtr');
-  const tb=document.getElementById('tbody-qtr');
-  if(!thead||!tb)return;
-  thead.innerHTML=`<tr><th class="col-p">Partido</th>${PARTS.map(p=>`<th>${sn(p)}</th>`).join('')}</tr>`;
-  tb.innerHTML='';
-  const pending=MS_QTR.filter(m=>!RESULTS_QTR[m.id]);
-  const played=MS_QTR.filter(m=>RESULTS_QTR[m.id]);
-  [...pending,...played].forEach((m,idx)=>{
-    if(idx===pending.length&&played.length>0&&pending.length>0){
-      const sep=document.createElement('tr');sep.className='tbl-sep';
-      sep.innerHTML=`<td colspan="${PARTS.length+1}">Partidos jugados</td>`;
-      tb.appendChild(sep);
-    }
-    const res=RESULTS_QTR[m.id];
-    const tr=document.createElement('tr');
-    const pc=`<td class="col-p"><span class="pname">${m.eq1} vs ${m.eq2}</span><div class="pdate">${m.date}${res?' · <span style="color:var(--am);font-weight:600">'+res.clf+' '+res.s1+'-'+res.s2+'</span>':''}</div></td>`;
-    const cells=PARTS.map(p=>{
-      const pk=(allDataQtr[p]||{})[m.id];
-      if(!pk?.clf)return`<td><div class="pick-empty">—</div></td>`;
-      const pts=calcPts(pk,res,'oct');
-      const hasS=pk.s1!==null&&pk.s2!==null;
-      const s1n=hasS?Number(pk.s1):null,s2n=hasS?Number(pk.s2):null;
-      const isPen=pk.isPen===true||(hasS&&s1n===s2n);
-      const sc=hasS?`${s1n} - ${s2n}`:'';
-      const wrong=pts===0;
-      const badge=pts===6?'<div><span class="badge b4">+6</span></div>':pts===3?'<div><span class="badge b2">+3</span></div>':pts===0&&res?'<div><span class="badge b0">✗</span></div>':'';
-      return`<td><div class="pick-clf${isPen?' pen':''}${wrong?' wrong':''}">${pk.clf}</div><div class="pick-score${wrong?' wrong':''}">${sc}</div>${isPen?'<div class="pick-pen">penales</div>':''}${badge}</td>`;
-    }).join('');
-    tr.innerHTML=pc+cells;tb.appendChild(tr);
-  });
-
-}
-
-
-// ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
   const tableId = fase==='16avos' ? 'picks16-table' : 'picks-oct-table';
   const tableEl = document.getElementById(tableId);
