@@ -596,27 +596,10 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
       </div>
     </div>
     <div class="tbl-wrap" id="picks-oct-table">
-      <table><thead id="thead-oct"></thead><tbody id="tbody-oct"></tbody></table>
+      <table><thead id="thead-oct-res"></thead><tbody id="tbody-oct-res"></tbody></table>
     </div>
   </div>
 
-    <!-- PICKS OCTAVOS -->
-  <div class="panel" id="panel-picks-oct">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
-      <div class="eyebrow" style="margin-bottom:0;flex:1">
-        <div class="eyebrow-line"></div>
-        <span class="eyebrow-text">Picks Octavos de final</span>
-        <div class="eyebrow-line"></div>
-      </div>
-      <div style="display:flex;gap:6px;flex-shrink:0">
-        <button class="ref-btn" onclick="printPicks('octavos')">⬇ PDF</button>
-        <button class="ref-btn" onclick="downloadImage('picks-oct-table','picks-octavos')">⬇ Imagen</button>
-      </div>
-    </div>
-    <div class="tbl-wrap" id="picks-oct-table">
-      <table><thead id="thead-oct"></thead><tbody id="tbody-oct"></tbody></table>
-    </div>
-  </div>
 
   <!-- CUARTOS -->
   <div class="panel active" id="panel-picks-qtr">
@@ -1107,7 +1090,7 @@ function renderAll(){
   buildRanking();
   buildTabla16('thead16','tbody16');
   buildTabla16('thead16b','tbody16b');
-  buildOctTabla();
+  buildOctTablaById('thead-oct-res','tbody-oct-res');
   buildOctTablaById('thead-oct-home','tbody-oct-home');
   buildQtrTabla();
   buildQtrForm();
