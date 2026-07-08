@@ -556,8 +556,8 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 <div class="nav-wrap">
   <div class="nav-pill">
     <button onclick="showPanel('ranking',this)">Ranking</button>
-    <button onclick="showPanel('picks-qtr',this)" class="active">Cuartos</button>
-    <button onclick="showPanel('picks16',this)">16avos</button>
+    <button class="active" onclick="showPanel('picks-qtr',this)">Cuartos</button>
+    <button onclick="showPanel('resumen',this)">Resumen</button>
     <button onclick="showPanel('bracket',this)">Llaves</button>
   </div>
 </div>
@@ -603,12 +603,12 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
     <div class="res-list" id="resultados-list"></div>
   </div>
 
-  <!-- PICKS 16AVOS (solo lectura) -->
-  <div class="panel" id="panel-picks16">
+  <!-- RESUMEN -->
+  <div class="panel" id="panel-resumen">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
         <div class="eyebrow-line"></div>
-        <span class="eyebrow-text">Picks 16avos · Cerrado</span>
+        <span class="eyebrow-text">16avos de Final · Cerrado</span>
         <div class="eyebrow-line"></div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0">
@@ -616,8 +616,23 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
         <button class="ref-btn" onclick="downloadImage('picks16-table','picks-16avos')">⬇ Imagen</button>
       </div>
     </div>
-    <div class="tbl-wrap" id="picks16-table">
+    <div class="tbl-wrap" id="picks16-table" style="margin-bottom:2.5rem">
       <table><thead id="thead16b"></thead><tbody id="tbody16b"></tbody></table>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+      <div class="eyebrow" style="margin-bottom:0;flex:1">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">Octavos de Final · Cerrado</span>
+        <div class="eyebrow-line"></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="ref-btn" onclick="printPicks('octavos')">⬇ PDF</button>
+        <button class="ref-btn" onclick="downloadImage('picks-oct-table','picks-octavos')">⬇ Imagen</button>
+      </div>
+    </div>
+    <div class="tbl-wrap" id="picks-oct-table">
+      <table><thead id="thead-oct"></thead><tbody id="tbody-oct"></tbody></table>
     </div>
   </div>
 
@@ -1146,7 +1161,7 @@ function showPanel(n,b){
   document.getElementById('panel-'+n).classList.add('active');
   if(b)b.classList.add('active');
   if(n==='bracket')setTimeout(loadBracket,100);
-  if(n==='ranking'||n==='picks16')window.scrollTo({top:0,behavior:'smooth'});
+  if(n==='ranking'||n==='resumen')window.scrollTo({top:0,behavior:'smooth'});
 }
 
 // ── BRACKET ──────────────────────────────────────────────
@@ -1203,10 +1218,10 @@ function buildBK(known){
     const QTR_PAIRS=[[0,2],[1,4],[3,5],[6,7]]; // same OCT_PAIRS grouping
     // But we know the actual cuartos matchups:
     const qtrMatches=[
-      {eq1:'Marruecos',eq2:'Francia',   k:'Morocco|France'},
-      {eq1:'España',   eq2:'Bélgica',   k:'Spain|Belgium'},
-      {eq1:'Noruega',  eq2:'Inglaterra',k:'Norway|England'},
-      {eq1:'Argentina',eq2:'Suiza',     k:'Argentina|Switzerland'},
+      {eq1:'Morocco',   eq2:'France',   k:'Morocco|France'},
+      {eq1:'Spain',     eq2:'Belgium',  k:'Spain|Belgium'},
+      {eq1:'Norway',    eq2:'England',  k:'Norway|England'},
+      {eq1:'Argentina', eq2:'Switzerland', k:'Argentina|Switzerland'},
     ];
     const qtr=qtrMatches.map(function(m){
       const res=known[m.k];
