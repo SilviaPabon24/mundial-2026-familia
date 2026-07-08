@@ -181,6 +181,12 @@ function buildQtrTabla(){
     }).join('');
     tr.innerHTML=pc+cells;tb.appendChild(tr);
   });
+  // Show tabla only if someone has registered
+  const section=document.getElementById('qtr-tabla-section');
+  if(section){
+    const hasData=PARTS.some(p=>allDataQtr[p]&&Object.values(allDataQtr[p]).some(pk=>pk.clf&&pk.clf!==''));
+    section.style.display=hasData?'block':'none';
+  }
 }
 
 
@@ -657,13 +663,15 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
       <button class="save-btn" id="qtr-save-btn" onclick="saveQtr()">💾 Guardar mis picks de cuartos</button>
       <div class="sync-bar" id="qtr-sbar"></div>
     </div>
-    <div class="eyebrow" style="margin-top:2rem">
-      <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Pronósticos cuartos — todos</span>
-      <div class="eyebrow-line"></div>
-    </div>
-    <div class="tbl-wrap" id="picks-qtr-table">
-      <table><thead id="thead-qtr"></thead><tbody id="tbody-qtr"></tbody></table>
+    <div id="qtr-tabla-section" style="display:none">
+      <div class="eyebrow" style="margin-top:2rem">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">Pronósticos cuartos — todos</span>
+        <div class="eyebrow-line"></div>
+      </div>
+      <div class="tbl-wrap" id="picks-qtr-table">
+        <table><thead id="thead-qtr"></thead><tbody id="tbody-qtr"></tbody></table>
+      </div>
     </div>
   </div>
 
