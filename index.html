@@ -932,12 +932,14 @@ function fetchWithTimeout(url, ms=6000){
 }
 async function fetchAllData(){
   try{
-    const [j16, joct] = await Promise.all([
+    const [j16, joct, jqtr] = await Promise.all([
       fetchWithTimeout(URL_GS+'?t='+Date.now()),
-      fetchWithTimeout(URL_GS+'?fase=octavos&t='+Date.now())
+      fetchWithTimeout(URL_GS+'?fase=octavos&t='+Date.now()),
+      fetchWithTimeout(URL_GS+'?fase=cuartos&t='+Date.now())
     ]);
     if(j16?.status==='ok') allData=j16.data||{};
     if(joct?.status==='ok') allDataOct=joct.data||{};
+    if(jqtr?.status==='ok') allDataQtr=jqtr.data||{};
   }catch(e){console.log('Fetch error:',e.message);}
 }
 function renderAll(){
