@@ -580,7 +580,7 @@ function totalPts(p){return totalPts16(p)+totalPtsOct(p)+totalPtsQtr(p);}
 
 // ── RANKING ──────────────────────────────────────────────
 function buildRanking(){
-  const lastMatch='Octavos: Marruecos 3-0 Canadá · Francia 1-0 Paraguay · Noruega 2-1 Brasil';
+  const lastMatch='Cuartos: Francia 2-0 Marruecos · Pendiente: España/Belgica, Noruega/Inglaterra, Argentina/Suiza';
   const el=document.getElementById('last-updated');
   if(el) el.textContent='Puntos actualizados con: '+lastMatch;
 
@@ -589,7 +589,7 @@ function buildRanking(){
   const maxPts=Math.max(...ranked.map(n=>totalPts(n)),0);
 
   ranked.forEach((name,i)=>{
-    const pts=totalPts(name),pts16=totalPts16(name),ptsOct=totalPtsOct(name);
+    const pts=totalPts(name),pts16=totalPts16(name),ptsOct=totalPtsOct(name),ptsQtr=totalPtsQtr(name);
     const isHero=pts>0&&pts===maxPts;
     const np=name.split(' ');const sn=np[0]+' '+(np[1]||'');
     const samePts=ranked.filter(n=>totalPts(n)===pts).length;
@@ -607,6 +607,7 @@ function buildRanking(){
       <div class="p-phases">
         <span class="ph ph-16">16a: ${pts16}</span>
         ${ptsOct>0?`<span class="ph ph-oct">8vos: ${ptsOct}</span>`:'<span class="ph ph-pending">8vos: —</span>'}
+        ${ptsQtr>0?`<span class="ph ph-oct">4tos: ${ptsQtr}</span>`:'<span class="ph ph-pending">4tos: —</span>'}
       </div>`;
     podio.appendChild(c);
   });
@@ -640,7 +641,7 @@ function buildTabla16(theadId,tbodyId){
       const isPen=pk.isPen===true||(hasS&&s1n===s2n);
       const sc=hasS?`${s1n} - ${s2n}`:(pk.score?.match(/^\d+-\d+$/)?pk.score.replace('-',' - '):'');
       const wrong=pts===0;
-      const badge=pts===6?'<div><span class="badge b4">+6</span></div>':pts===3?'<div><span class="badge b2">+3</span></div>':pts===0?'<div><span class="badge b0">✗</span></div>':'';
+      const badge=pts===4?'<div><span class="badge b4">+4</span></div>':pts===2?'<div><span class="badge b2">+2</span></div>':pts===0&&res?'<div><span class="badge b0">✗</span></div>':'';
       return`<td><div class="pick-clf${isPen?' pen':''}${wrong?' wrong':''}">${pk.clf}</div><div class="pick-score${wrong?' wrong':''}">${sc}</div>${isPen?'<div class="pick-pen">penales</div>':''}${badge}</td>`;
     }).join('');
     tr.innerHTML=pc+cells;tb.appendChild(tr);
