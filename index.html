@@ -403,24 +403,6 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
     <div class="eyebrow" style="margin-top:2.5rem">
       <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Pronósticos Octavos — todos</span>
-      <div class="eyebrow-line"></div>
-    </div>
-    <div class="tbl-wrap" style="margin-bottom:2rem" id="picks-oct-table-home">
-      <table><thead id="thead-oct-home"></thead><tbody id="tbody-oct-home"></tbody></table>
-    </div>
-
-    <div class="eyebrow" style="margin-top:1.5rem">
-      <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Pronósticos 16avos — todos</span>
-      <div class="eyebrow-line"></div>
-    </div>
-    <div class="tbl-wrap" style="margin-bottom:2rem">
-      <table><thead id="thead16"></thead><tbody id="tbody16"></tbody></table>
-    </div>
-
-    <div class="eyebrow" style="margin-top:2.5rem">
-      <div class="eyebrow-line"></div>
       <span class="eyebrow-text">Pronósticos cuartos — todos</span>
       <div class="eyebrow-line"></div>
     </div>
@@ -935,7 +917,6 @@ async function fetchAllData(){
 }
 function renderAll(){
   buildRanking();
-  buildTabla16('thead16','tbody16');
   buildTabla16('thead16b','tbody16b');
   buildOctTablaById('thead-oct','tbody-oct');
   buildQtrTablaById('thead-qtr-home','tbody-qtr-home');
