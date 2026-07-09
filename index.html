@@ -12,7 +12,7 @@
 
 // ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
-  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : 'picks-qtr-table';
+  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : 'picks-qtr-res-table';
   const tableEl = document.getElementById(tableId);
   if(!tableEl) return;
 
@@ -381,7 +381,6 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 <div class="nav-wrap">
   <div class="nav-pill">
     <button class="active" onclick="showPanel('ranking',this)">Ranking</button>
-    <button onclick="showPanel('picks-qtr',this)">Cuartos</button>
     <button onclick="showPanel('resumen',this)">Resumen</button>
     <button onclick="showPanel('bracket',this)">Llaves</button>
   </div>
@@ -437,38 +436,6 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
     <div class="res-list" id="resultados-list"></div>
   </div>
 
-  <!-- CUARTOS -->
-  <div class="panel" id="panel-picks-qtr">
-    <div class="eyebrow">
-      <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Picks Cuartos de final</span>
-      <div class="eyebrow-line"></div>
-    </div>
-    <div class="cierre-bar">⏰ Cierre: Jue 9 jul · 2:30pm hora Colombia</div>
-    <div class="who-bar">
-      <label>¿Quién eres?</label>
-      <select id="psel-qtr" onchange="onQtrNameSelect()">
-        <option value="">— Elige tu nombre —</option>
-      </select>
-    </div>
-    <div id="qtr-form"></div>
-    <div style="padding:1.5rem 0 1rem;text-align:center">
-      <button class="save-btn" id="qtr-save-btn" onclick="saveQtr()">💾 Guardar mis picks de cuartos</button>
-      <div class="sync-bar" id="qtr-sbar"></div>
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2rem;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
-      <div class="eyebrow" style="margin-bottom:0;flex:1">
-        <div class="eyebrow-line"></div>
-        <span class="eyebrow-text">Pronósticos cuartos — todos</span>
-        <div class="eyebrow-line"></div>
-      </div>
-      <button class="ref-btn" onclick="printPicks('cuartos')" style="flex-shrink:0">⬇ PDF</button>
-    </div>
-    <div class="tbl-wrap" id="picks-qtr-table">
-      <table><thead id="thead-qtr"></thead><tbody id="tbody-qtr"></tbody></table>
-    </div>
-  </div>
-
   <!-- RESUMEN -->
   <div class="panel" id="panel-resumen">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
@@ -496,8 +463,20 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
         <button class="ref-btn" onclick="downloadImage('picks-oct-table','picks-octavos')">⬇ Imagen</button>
       </div>
     </div>
-    <div class="tbl-wrap" id="picks-oct-table">
+    <div class="tbl-wrap" id="picks-oct-table" style="margin-bottom:2.5rem">
       <table><thead id="thead-oct"></thead><tbody id="tbody-oct"></tbody></table>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+      <div class="eyebrow" style="margin-bottom:0;flex:1">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">Cuartos de Final</span>
+        <div class="eyebrow-line"></div>
+      </div>
+      <button class="ref-btn" onclick="printPicks('cuartos')">⬇ PDF</button>
+    </div>
+    <div class="tbl-wrap" id="picks-qtr-res-table">
+      <table><thead id="thead-qtr-res"></thead><tbody id="tbody-qtr-res"></tbody></table>
     </div>
   </div>
 
@@ -960,8 +939,7 @@ function renderAll(){
   buildTabla16('thead16b','tbody16b');
   buildOctTablaById('thead-oct','tbody-oct');
   buildQtrTablaById('thead-qtr-home','tbody-qtr-home');
-  buildQtrTabla();
-  buildQtrForm();
+  buildQtrTablaById('thead-qtr-res','tbody-qtr-res');
 }
 async function refreshData(){
   renderAll();
@@ -1269,7 +1247,7 @@ setTimeout(()=>{
 
 // ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
-  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : 'picks-qtr-table';
+  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : 'picks-qtr-res-table';
   const tableEl = document.getElementById(tableId);
   if(!tableEl) return;
 
