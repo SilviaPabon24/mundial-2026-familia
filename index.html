@@ -380,8 +380,8 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
 <div class="nav-wrap">
   <div class="nav-pill">
-    <button onclick="showPanel('ranking',this)">Ranking</button>
-    <button class="active" onclick="showPanel('picks-qtr',this)">Cuartos</button>
+    <button class="active" onclick="showPanel('ranking',this)">Ranking</button>
+    <button onclick="showPanel('picks-qtr',this)">Cuartos</button>
     <button onclick="showPanel('resumen',this)">Resumen</button>
     <button onclick="showPanel('bracket',this)">Llaves</button>
   </div>
@@ -390,7 +390,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 <main>
 
     <!-- RANKING -->
-  <div class="panel" id="panel-ranking">
+  <div class="panel active" id="panel-ranking">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
         <div class="eyebrow-line"></div>
@@ -420,6 +420,15 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
       <table><thead id="thead16"></thead><tbody id="tbody16"></tbody></table>
     </div>
 
+    <div class="eyebrow" style="margin-top:2.5rem">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">Pronósticos cuartos — todos</span>
+      <div class="eyebrow-line"></div>
+    </div>
+    <div class="tbl-wrap" style="margin-bottom:2rem" id="picks-qtr-table-home">
+      <table><thead id="thead-qtr-home"></thead><tbody id="tbody-qtr-home"></tbody></table>
+    </div>
+
     <div class="eyebrow" style="margin-top:1rem">
       <div class="eyebrow-line"></div>
       <span class="eyebrow-text">Resultados oficiales</span>
@@ -429,7 +438,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
   </div>
 
   <!-- CUARTOS -->
-  <div class="panel active" id="panel-picks-qtr">
+  <div class="panel" id="panel-picks-qtr">
     <div class="eyebrow">
       <div class="eyebrow-line"></div>
       <span class="eyebrow-text">Picks Cuartos de final</span>
@@ -950,6 +959,7 @@ function renderAll(){
   buildTabla16('thead16','tbody16');
   buildTabla16('thead16b','tbody16b');
   buildOctTablaById('thead-oct','tbody-oct');
+  buildQtrTablaById('thead-qtr-home','tbody-qtr-home');
   buildQtrTabla();
   buildQtrForm();
 }
@@ -1168,6 +1178,40 @@ async function saveQtr(){
     else throw new Error(j.message);
   }catch(e){setSbar('qtr-sbar','err','Error al guardar');}
   finally{btn.disabled=false;btn.textContent='💾 Guardar mis picks de cuartos';}
+}
+
+function buildQtrTablaById(theadId, tbodyId){
+  const sn=n=>{const p=n.split(' ');return p[0].length>7?p[0]:p[0]+' '+p[1]?.charAt(0)+'.'};
+  const thead=document.getElementById(theadId);
+  const tb=document.getElementById(tbodyId);
+  if(!thead||!tb)return;
+  thead.innerHTML=`<tr><th class="col-p">Partido</th>${PARTS.map(p=>`<th>${sn(p)}</th>`).join('')}</tr>`;
+  tb.innerHTML='';
+  const pending=MS_QTR.filter(m=>!RESULTS_QTR[m.id]);
+  const played=MS_QTR.filter(m=>RESULTS_QTR[m.id]);
+  [...pending,...played].forEach((m,idx)=>{
+    if(idx===pending.length&&played.length>0&&pending.length>0){
+      const sep=document.createElement('tr');sep.className='tbl-sep';
+      sep.innerHTML=`<td colspan="${PARTS.length+1}">Partidos jugados</td>`;
+      tb.appendChild(sep);
+    }
+    const res=RESULTS_QTR[m.id];
+    const tr=document.createElement('tr');
+    const pc=`<td class="col-p"><span class="pname">${m.eq1} vs ${m.eq2}</span><div class="pdate">${m.date}${res?' · <span style="color:var(--am);font-weight:600">'+res.clf+' '+res.s1+'-'+res.s2+'</span>':''}</div></td>`;
+    const cells=PARTS.map(p=>{
+      const pk=(allDataQtr[p]||{})[m.id];
+      if(!pk?.clf)return`<td><div class="pick-empty">—</div></td>`;
+      const pts=calcPts(pk,res,'oct');
+      const hasS=pk.s1!==null&&pk.s2!==null;
+      const s1n=hasS?Number(pk.s1):null,s2n=hasS?Number(pk.s2):null;
+      const isPen=pk.isPen===true||(hasS&&s1n===s2n);
+      const sc=hasS?`${s1n} - ${s2n}`:'';
+      const wrong=pts===0;
+      const badge=pts===6?'<div><span class="badge b4">+6</span></div>':pts===3?'<div><span class="badge b2">+3</span></div>':pts===0&&res?'<div><span class="badge b0">✗</span></div>':'';
+      return`<td><div class="pick-clf${isPen?' pen':''}${wrong?' wrong':''}">${pk.clf}</div><div class="pick-score${wrong?' wrong':''}">${sc}</div>${isPen?'<div class="pick-pen">penales</div>':''}${badge}</td>`;
+    }).join('');
+    tr.innerHTML=pc+cells;tb.appendChild(tr);
+  });
 }
 
 function buildQtrTabla(){
