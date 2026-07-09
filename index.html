@@ -12,11 +12,11 @@
 
 // ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
-  const tableId = fase==='16avos' ? 'picks16-table' : 'picks-oct-table';
+  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : 'picks-qtr-table';
   const tableEl = document.getElementById(tableId);
   if(!tableEl) return;
 
-  const title = fase==='16avos' ? 'Picks 16avos de Final' : 'Picks Octavos de Final';
+  const title = fase==='16avos' ? 'Picks 16avos de Final' : fase==='octavos' ? 'Picks Octavos de Final' : 'Picks Cuartos de Final';
   const now = new Date().toLocaleString('es-CO', {
     day:'2-digit', month:'long', year:'numeric',
     hour:'2-digit', minute:'2-digit'
@@ -447,10 +447,13 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
       <button class="save-btn" id="qtr-save-btn" onclick="saveQtr()">💾 Guardar mis picks de cuartos</button>
       <div class="sync-bar" id="qtr-sbar"></div>
     </div>
-    <div class="eyebrow" style="margin-top:2rem">
-      <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Pronósticos cuartos — todos</span>
-      <div class="eyebrow-line"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2rem;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+      <div class="eyebrow" style="margin-bottom:0;flex:1">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">Pronósticos cuartos — todos</span>
+        <div class="eyebrow-line"></div>
+      </div>
+      <button class="ref-btn" onclick="printPicks('cuartos')" style="flex-shrink:0">⬇ PDF</button>
     </div>
     <div class="tbl-wrap" id="picks-qtr-table">
       <table><thead id="thead-qtr"></thead><tbody id="tbody-qtr"></tbody></table>
@@ -1222,11 +1225,11 @@ setTimeout(()=>{
 
 // ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
-  const tableId = fase==='16avos' ? 'picks16-table' : 'picks-oct-table';
+  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : 'picks-qtr-table';
   const tableEl = document.getElementById(tableId);
   if(!tableEl) return;
 
-  const title = fase==='16avos' ? 'Picks 16avos de Final' : 'Picks Octavos de Final';
+  const title = fase==='16avos' ? 'Picks 16avos de Final' : fase==='octavos' ? 'Picks Octavos de Final' : 'Picks Cuartos de Final';
   const now = new Date().toLocaleString('es-CO', {
     day:'2-digit', month:'long', year:'numeric',
     hour:'2-digit', minute:'2-digit'
