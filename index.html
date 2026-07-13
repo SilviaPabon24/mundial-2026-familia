@@ -380,7 +380,8 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
 <div class="nav-wrap">
   <div class="nav-pill">
-    <button class="active" onclick="showPanel('ranking',this)">Ranking</button>
+    <button onclick="showPanel('ranking',this)">Ranking</button>
+    <button class="active" onclick="showPanel('picks-semi',this)">Semis</button>
     <button onclick="showPanel('resumen',this)">Resumen</button>
     <button onclick="showPanel('bracket',this)">Llaves</button>
   </div>
@@ -389,7 +390,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 <main>
 
     <!-- RANKING -->
-  <div class="panel active" id="panel-ranking">
+  <div class="panel" id="panel-ranking">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
         <div class="eyebrow-line"></div>
@@ -403,11 +404,11 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
     <div class="eyebrow" style="margin-top:2.5rem">
       <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Pronósticos cuartos — todos</span>
+      <span class="eyebrow-text">Pronósticos semis — todos</span>
       <div class="eyebrow-line"></div>
     </div>
-    <div class="tbl-wrap" style="margin-bottom:2rem" id="picks-qtr-table-home">
-      <table><thead id="thead-qtr-home"></thead><tbody id="tbody-qtr-home"></tbody></table>
+    <div class="tbl-wrap" style="margin-bottom:2rem" id="picks-semi-table-home">
+      <table><thead id="thead-semi-home"></thead><tbody id="tbody-semi-home"></tbody></table>
     </div>
 
     <div class="eyebrow" style="margin-top:1rem">
@@ -416,6 +417,35 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
       <div class="eyebrow-line"></div>
     </div>
     <div class="res-list" id="resultados-list"></div>
+  </div>
+
+  <!-- SEMIS -->
+  <div class="panel active" id="panel-picks-semi">
+    <div class="eyebrow">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">Picks Semifinales</span>
+      <div class="eyebrow-line"></div>
+    </div>
+    <div class="cierre-bar">⏰ Cierre: Mar 14 jul · 3:30pm hora Colombia</div>
+    <div class="who-bar">
+      <label>¿Quién eres?</label>
+      <select id="psel-semi" onchange="onSemiNameSelect()">
+        <option value="">— Elige tu nombre —</option>
+      </select>
+    </div>
+    <div id="semi-form"></div>
+    <div style="padding:1.5rem 0 1rem;text-align:center">
+      <button class="save-btn" id="semi-save-btn" onclick="saveSemi()">💾 Guardar mis picks de semis</button>
+      <div class="sync-bar" id="semi-sbar"></div>
+    </div>
+    <div class="eyebrow" style="margin-top:2rem">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">Pronósticos semis — todos</span>
+      <div class="eyebrow-line"></div>
+    </div>
+    <div class="tbl-wrap" id="picks-semi-table">
+      <table><thead id="thead-semi"></thead><tbody id="tbody-semi"></tbody></table>
+    </div>
   </div>
 
   <!-- RESUMEN -->
@@ -561,8 +591,13 @@ const MS_QTR=[
   {id:3, date:'Sáb 11 jul · 4:00pm', eq1:'Noruega',   eq2:'Inglaterra', flag1:'no', flag2:'gb-eng'},
   {id:4, date:'Sáb 11 jul · 8:00pm', eq1:'Argentina', eq2:'Suiza',      flag1:'ar', flag2:'ch'},
 ];
+const MS_SEMI=[
+  {id:1, date:'Mar 14 jul · 4:00pm', eq1:'Francia',    eq2:'España',    flag1:'fr', flag2:'es'},
+  {id:2, date:'Mié 15 jul · 3:00pm', eq1:'Inglaterra', eq2:'Argentina', flag1:'gb-eng', flag2:'ar'},
+];
+let RESULTS_SEMI={};
 let RESULTS_QTR={1:{clf:'Francia',s1:0,s2:2,isPen:false},2:{clf:'España',s1:2,s2:1,isPen:false},3:{clf:'Inglaterra',s1:1,s2:2,isPen:false},4:{clf:'Argentina',s1:3,s2:1,isPen:false}};
-let allData={}, allDataOct={}, allDataQtr={}, octPicks={}, qtrPicks={};
+let allData={}, allDataOct={}, allDataQtr={}, allDataSemi={}, octPicks={}, qtrPicks={}, semiPicks={};
 
 // ── PUNTOS ───────────────────────────────────────────────
 function calcPts(pk, res, fase){
@@ -575,8 +610,9 @@ function calcPts(pk, res, fase){
 }
 function totalPts16(p){let t=0;MS.forEach(m=>{const pts=calcPts((allData[p]||{})[m.id],RESULTS[m.id]);if(pts)t+=pts;});return t;}
 function totalPtsOct(p){let t=0;MS_OCT.forEach(m=>{const pts=calcPts((allDataOct[p]||{})[m.id],RESULTS_OCT[m.id],'oct');if(pts)t+=pts;});return t;}
+function totalPtsSemi(p){let t=0;MS_SEMI.forEach(m=>{const pts=calcPts((allDataSemi[p]||{})[m.id],RESULTS_SEMI[m.id],'oct');if(pts)t+=pts;});return t;}
 function totalPtsQtr(p){let t=0;MS_QTR.forEach(m=>{const pts=calcPts((allDataQtr[p]||{})[m.id],RESULTS_QTR[m.id],'oct');if(pts)t+=pts;});return t;}
-function totalPts(p){return totalPts16(p)+totalPtsOct(p)+totalPtsQtr(p);}
+function totalPts(p){return totalPts16(p)+totalPtsOct(p)+totalPtsQtr(p)+totalPtsSemi(p);}
 
 // ── RANKING ──────────────────────────────────────────────
 function buildRanking(){
@@ -589,7 +625,7 @@ function buildRanking(){
   const maxPts=Math.max(...ranked.map(n=>totalPts(n)),0);
 
   ranked.forEach((name,i)=>{
-    const pts=totalPts(name),pts16=totalPts16(name),ptsOct=totalPtsOct(name),ptsQtr=totalPtsQtr(name);
+    const pts=totalPts(name),pts16=totalPts16(name),ptsOct=totalPtsOct(name),ptsQtr=totalPtsQtr(name),ptsSemi=totalPtsSemi(name);
     const isHero=pts>0&&pts===maxPts;
     const np=name.split(' ');const sn=np[0]+' '+(np[1]||'');
     const samePts=ranked.filter(n=>totalPts(n)===pts).length;
@@ -608,6 +644,7 @@ function buildRanking(){
         <span class="ph ph-16">16a: ${pts16}</span>
         ${ptsOct>0?`<span class="ph ph-oct">8vos: ${ptsOct}</span>`:'<span class="ph ph-pending">8vos: —</span>'}
         ${ptsQtr>0?`<span class="ph ph-oct">4tos: ${ptsQtr}</span>`:'<span class="ph ph-pending">4tos: —</span>'}
+        ${ptsSemi>0?`<span class="ph ph-oct">Semi: ${ptsSemi}</span>`:'<span class="ph ph-pending">Semi: —</span>'}
       </div>`;
     podio.appendChild(c);
   });
@@ -905,22 +942,26 @@ function fetchWithTimeout(url, ms=6000){
 }
 async function fetchAllData(){
   try{
-    const [j16, joct, jqtr] = await Promise.all([
+    const [j16, joct, jqtr, jsemi] = await Promise.all([
       fetchWithTimeout(URL_GS+'?t='+Date.now()),
       fetchWithTimeout(URL_GS+'?fase=octavos&t='+Date.now()),
-      fetchWithTimeout(URL_GS+'?fase=cuartos&t='+Date.now())
+      fetchWithTimeout(URL_GS+'?fase=cuartos&t='+Date.now()),
+      fetchWithTimeout(URL_GS+'?fase=semis&t='+Date.now())
     ]);
     if(j16?.status==='ok') allData=j16.data||{};
     if(joct?.status==='ok') allDataOct=joct.data||{};
     if(jqtr?.status==='ok') allDataQtr=jqtr.data||{};
+    if(jsemi?.status==='ok') allDataSemi=jsemi.data||{};
   }catch(e){console.log('Fetch error:',e.message);}
 }
 function renderAll(){
   buildRanking();
   buildTabla16('thead16b','tbody16b');
   buildOctTablaById('thead-oct','tbody-oct');
-  buildQtrTablaById('thead-qtr-home','tbody-qtr-home');
   buildQtrTablaById('thead-qtr-res','tbody-qtr-res');
+  buildSemiTabla('thead-semi-home','tbody-semi-home');
+  buildSemiTabla('thead-semi','tbody-semi');
+  buildSemiForm();
 }
 async function refreshData(){
   renderAll();
@@ -1240,6 +1281,174 @@ function buildQtrTabla(){
     const pc=`<td class="col-p"><span class="pname">${m.eq1} vs ${m.eq2}</span><div class="pdate">${m.date}${res?' · <span style="color:var(--am);font-weight:600">'+res.clf+' '+res.s1+'-'+res.s2+'</span>':''}</div></td>`;
     const cells=PARTS.map(p=>{
       const pk=(allDataQtr[p]||{})[m.id];
+      if(!pk?.clf)return`<td><div class="pick-empty">—</div></td>`;
+      const pts=calcPts(pk,res,'oct');
+      const hasS=pk.s1!==null&&pk.s2!==null;
+      const s1n=hasS?Number(pk.s1):null,s2n=hasS?Number(pk.s2):null;
+      const isPen=pk.isPen===true||(hasS&&s1n===s2n);
+      const sc=hasS?`${s1n} - ${s2n}`:'';
+      const wrong=pts===0;
+      const badge=pts===6?'<div><span class="badge b4">+6</span></div>':pts===3?'<div><span class="badge b2">+3</span></div>':pts===0&&res?'<div><span class="badge b0">✗</span></div>':'';
+      return`<td><div class="pick-clf${isPen?' pen':''}${wrong?' wrong':''}">${pk.clf}</div><div class="pick-score${wrong?' wrong':''}">${sc}</div>${isPen?'<div class="pick-pen">penales</div>':''}${badge}</td>`;
+    }).join('');
+    tr.innerHTML=pc+cells;tb.appendChild(tr);
+  });
+}
+
+// ── SEMIS FORM ───────────────────────────────────────────
+function buildSemiForm(){
+  const sel=document.getElementById('psel-semi');
+  while(sel.options.length>1) sel.remove(1);
+  PARTS.forEach(n=>{
+    const yaGuardo=allDataSemi[n]&&Object.values(allDataSemi[n]).some(pk=>pk.clf&&pk.clf!=='');
+    if(!yaGuardo){const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);}
+  });
+  const form=document.getElementById('semi-form');if(!form)return;form.innerHTML='';
+  MS_SEMI.forEach(m=>{
+    const d=document.createElement('div');d.className='match-card';d.id='semi-mc'+m.id;
+    const f1=`<img class="team-flag" src="https://flagcdn.com/w40/${m.flag1}.png" alt="${m.eq1}">`;
+    const f2=`<img class="team-flag" src="https://flagcdn.com/w40/${m.flag2}.png" alt="${m.eq2}">`;
+    const e1=m.eq1.replace(/'/g,"\'"),e2=m.eq2.replace(/'/g,"\'");
+    d.innerHTML=`
+      <div class="match-meta">${m.date}</div>
+      <div class="scoreboard">
+        <div class="team-col" id="semi-tc1-${m.id}">${f1}<div class="team-name">${m.eq1}</div><input class="goal-input" type="number" id="semi-s1-${m.id}" min="0" max="20" value="0" oninput="onSemiScore(${m.id})" onchange="onSemiScore(${m.id})"></div>
+        <div class="vs-center">VS</div>
+        <div class="team-col" id="semi-tc2-${m.id}">${f2}<div class="team-name">${m.eq2}</div><input class="goal-input" type="number" id="semi-s2-${m.id}" min="0" max="20" value="0" oninput="onSemiScore(${m.id})" onchange="onSemiScore(${m.id})"></div>
+      </div>
+      <div class="pen-banner" id="semi-pen-${m.id}">
+        <div class="pen-title">🥅 Empate — ¿quién gana en penales?</div>
+        <div class="pen-btns">
+          <button class="pen-btn" id="semi-pb1-${m.id}" onclick="setSemiPen(${m.id},1,'${e1}')">${f1} ${m.eq1}</button>
+          <button class="pen-btn" id="semi-pb2-${m.id}" onclick="setSemiPen(${m.id},2,'${e2}')">${f2} ${m.eq2}</button>
+        </div>
+      </div>`;
+    form.appendChild(d);
+  });
+  setTimeout(()=>setSemiInputsDisabled(true),50);
+}
+
+function setSemiInputsDisabled(disabled){
+  MS_SEMI.forEach(m=>{
+    ['semi-s1-','semi-s2-','semi-pb1-','semi-pb2-'].forEach(pre=>{
+      const el=document.getElementById(pre+m.id);if(el)el.disabled=disabled;
+    });
+  });
+  const btn=document.getElementById('semi-save-btn');if(btn)btn.disabled=disabled;
+}
+
+function onSemiNameSelect(){
+  const me=document.getElementById('psel-semi').value;
+  semiPicks={};
+  if(!me){setSemiInputsDisabled(true);return;}
+  setSemiInputsDisabled(false);
+  loadSemiPicks();
+}
+
+function onSemiScore(id){
+  const v1=parseInt(document.getElementById('semi-s1-'+id).value)||0;
+  const v2=parseInt(document.getElementById('semi-s2-'+id).value)||0;
+  if(!semiPicks[id])semiPicks[id]={};
+  semiPicks[id].s1=v1;semiPicks[id].s2=v2;semiPicks[id].score=v1+'-'+v2;
+  const tc1=document.getElementById('semi-tc1-'+id),tc2=document.getElementById('semi-tc2-'+id);
+  const pen=document.getElementById('semi-pen-'+id),mc=document.getElementById('semi-mc'+id);
+  tc1.classList.remove('winner','winner-pen');tc2.classList.remove('winner','winner-pen');
+  if(v1===v2){
+    pen.classList.add('show');mc.className='match-card draw';
+    const clf=semiPicks[id]?.clf;
+    const m=MS_SEMI.find(x=>x.id===id);
+    if(clf&&m){if(clf===m.eq1)tc1.classList.add('winner-pen');else tc2.classList.add('winner-pen');}
+  }else{
+    pen.classList.remove('show');
+    document.getElementById('semi-pb1-'+id).classList.remove('sel');
+    document.getElementById('semi-pb2-'+id).classList.remove('sel');
+    const m=MS_SEMI.find(x=>x.id===id);
+    if(v1>v2){semiPicks[id].clf=m.eq1;tc1.classList.add('winner');mc.className='match-card done';}
+    else{semiPicks[id].clf=m.eq2;tc2.classList.add('winner');mc.className='match-card done';}
+  }
+}
+
+function setSemiPen(id,side,name){
+  if(!semiPicks[id])semiPicks[id]={s1:0,s2:0,score:'0-0'};
+  semiPicks[id].clf=name;
+  document.getElementById('semi-pb1-'+id).classList.toggle('sel',side===1);
+  document.getElementById('semi-pb2-'+id).classList.toggle('sel',side===2);
+  const tc1=document.getElementById('semi-tc1-'+id),tc2=document.getElementById('semi-tc2-'+id);
+  tc1.classList.remove('winner-pen');tc2.classList.remove('winner-pen');
+  (side===1?tc1:tc2).classList.add('winner-pen');
+  document.getElementById('semi-mc'+id).className='match-card draw';
+}
+
+function loadSemiPicks(){
+  const me=document.getElementById('psel-semi').value;
+  semiPicks={};
+  if(!me)return;
+  const ex=allDataSemi[me]||{};
+  MS_SEMI.forEach(m=>{
+    const p=ex[m.id]||{};
+    semiPicks[m.id]={clf:p.clf||'',s1:parseInt(p.s1??0),s2:parseInt(p.s2??0),score:p.score||'0-0'};
+    const lp=semiPicks[m.id];
+    const s1el=document.getElementById('semi-s1-'+m.id),s2el=document.getElementById('semi-s2-'+m.id);
+    if(s1el)s1el.value=lp.s1;if(s2el)s2el.value=lp.s2;
+    const tc1=document.getElementById('semi-tc1-'+m.id),tc2=document.getElementById('semi-tc2-'+m.id);
+    const pen=document.getElementById('semi-pen-'+m.id);
+    tc1.classList.remove('winner','winner-pen');tc2.classList.remove('winner','winner-pen');
+    pen.classList.remove('show');
+    document.getElementById('semi-pb1-'+m.id).classList.remove('sel');
+    document.getElementById('semi-pb2-'+m.id).classList.remove('sel');
+    document.getElementById('semi-mc'+m.id).className='match-card';
+    if(!lp.clf)return;
+    if(lp.s1===lp.s2){
+      pen.classList.add('show');document.getElementById('semi-mc'+m.id).className='match-card draw';
+      if(lp.clf===m.eq1){tc1.classList.add('winner-pen');document.getElementById('semi-pb1-'+m.id).classList.add('sel');}
+      else{tc2.classList.add('winner-pen');document.getElementById('semi-pb2-'+m.id).classList.add('sel');}
+    }else{
+      document.getElementById('semi-mc'+m.id).className='match-card done';
+      if(lp.clf===m.eq1)tc1.classList.add('winner');else tc2.classList.add('winner');
+    }
+  });
+}
+
+async function saveSemi(){
+  const me=document.getElementById('psel-semi').value;
+  if(!me){alert('Selecciona tu nombre primero');return;}
+  MS_SEMI.forEach(m=>{
+    const v1=parseInt(document.getElementById('semi-s1-'+m.id).value)||0;
+    const v2=parseInt(document.getElementById('semi-s2-'+m.id).value)||0;
+    if(!semiPicks[m.id])semiPicks[m.id]={};
+    semiPicks[m.id].s1=v1;semiPicks[m.id].s2=v2;semiPicks[m.id].score=v1+'-'+v2;
+  });
+  const btn=document.getElementById('semi-save-btn');
+  btn.disabled=true;btn.textContent='Guardando...';
+  setSbar('semi-sbar','spin','Enviando...');
+  try{
+    const r=await fetch(URL_GS,{method:'POST',body:JSON.stringify({participant:me,picks:semiPicks,fase:'semis'})});
+    const j=await r.json();
+    if(j.status==='ok'){setSbar('semi-sbar','ok','¡Guardado! ✓');await fetchAllData();renderAll();}
+    else throw new Error(j.message);
+  }catch(e){setSbar('semi-sbar','err','Error al guardar');}
+  finally{btn.disabled=false;btn.textContent='💾 Guardar mis picks de semis';}
+}
+
+function buildSemiTabla(theadId,tbodyId){
+  const sn=n=>{const p=n.split(' ');return p[0].length>7?p[0]:p[0]+' '+p[1]?.charAt(0)+'.'};
+  const thead=document.getElementById(theadId),tb=document.getElementById(tbodyId);
+  if(!thead||!tb)return;
+  thead.innerHTML=`<tr><th class="col-p">Partido</th>${PARTS.map(p=>`<th>${sn(p)}</th>`).join('')}</tr>`;
+  tb.innerHTML='';
+  const pending=MS_SEMI.filter(m=>!RESULTS_SEMI[m.id]);
+  const played=MS_SEMI.filter(m=>RESULTS_SEMI[m.id]);
+  [...pending,...played].forEach((m,idx)=>{
+    if(idx===pending.length&&played.length>0&&pending.length>0){
+      const sep=document.createElement('tr');sep.className='tbl-sep';
+      sep.innerHTML=`<td colspan="${PARTS.length+1}">Partidos jugados</td>`;
+      tb.appendChild(sep);
+    }
+    const res=RESULTS_SEMI[m.id];
+    const tr=document.createElement('tr');
+    const pc=`<td class="col-p"><span class="pname">${m.eq1} vs ${m.eq2}</span><div class="pdate">${m.date}${res?' · <span style="color:var(--am);font-weight:600">'+res.clf+' '+res.s1+'-'+res.s2+'</span>':''}</div></td>`;
+    const cells=PARTS.map(p=>{
+      const pk=(allDataSemi[p]||{})[m.id];
       if(!pk?.clf)return`<td><div class="pick-empty">—</div></td>`;
       const pts=calcPts(pk,res,'oct');
       const hasS=pk.s1!==null&&pk.s2!==null;
