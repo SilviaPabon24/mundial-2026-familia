@@ -568,7 +568,7 @@ const MS_SEMI=[
   {id:1, date:'Mar 14 jul · 4:00pm', eq1:'Francia',    eq2:'España',    flag1:'fr', flag2:'es'},
   {id:2, date:'Mié 15 jul · 3:00pm', eq1:'Inglaterra', eq2:'Argentina', flag1:'gb-eng', flag2:'ar'},
 ];
-let RESULTS_SEMI={};
+let RESULTS_SEMI={1:{clf:'España',s1:0,s2:2,isPen:false}};
 let RESULTS_QTR={1:{clf:'Francia',s1:0,s2:2,isPen:false},2:{clf:'España',s1:2,s2:1,isPen:false},3:{clf:'Inglaterra',s1:1,s2:2,isPen:false},4:{clf:'Argentina',s1:3,s2:1,isPen:false}};
 let allData={}, allDataOct={}, allDataQtr={}, allDataSemi={}, octPicks={}, qtrPicks={}, semiPicks={};
 
@@ -589,7 +589,7 @@ function totalPts(p){return totalPts16(p)+totalPtsOct(p)+totalPtsQtr(p)+totalPts
 
 // ── RANKING ──────────────────────────────────────────────
 function buildRanking(){
-  const lastMatch='Cuartos completos: Francia 2-0 · España 2-1 · Inglaterra 2-1 · Argentina 3-1';
+  const lastMatch='Semis: Espana 2-0 Francia | Pendiente: Inglaterra/Argentina';
   const el=document.getElementById('last-updated');
   if(el) el.textContent='Puntos actualizados con: '+lastMatch;
 
@@ -987,6 +987,7 @@ const KNOWN={
   'Spain|Belgium':                 {s1:2,s2:1,done:true},
   'Norway|England':                {s1:1,s2:2,done:true},
   'Argentina|Switzerland':         {s1:3,s2:1,done:true},
+  'France|Spain':                  {s1:0,s2:2,done:true},
 };
 
 function tbox(name,score,status){
