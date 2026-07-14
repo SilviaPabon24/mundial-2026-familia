@@ -12,11 +12,11 @@
 
 // ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
-  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : 'picks-qtr-res-table';
+  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : 'picks-semi-table';
   const tableEl = document.getElementById(tableId);
   if(!tableEl) return;
 
-  const title = fase==='16avos' ? 'Picks 16avos de Final' : fase==='octavos' ? 'Picks Octavos de Final' : 'Picks Cuartos de Final';
+  const title = fase==='16avos' ? 'Picks 16avos de Final' : fase==='octavos' ? 'Picks Octavos de Final' : fase==='cuartos' ? 'Picks Cuartos de Final' : 'Picks Semifinales';
   const now = new Date().toLocaleString('es-CO', {
     day:'2-digit', month:'long', year:'numeric',
     hour:'2-digit', minute:'2-digit'
@@ -421,34 +421,20 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
   <!-- SEMIS -->
   <div class="panel active" id="panel-picks-semi">
-    <div class="eyebrow">
-      <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Picks Semifinales</span>
-      <div class="eyebrow-line"></div>
-    </div>
-    <div class="cierre-bar">⏰ Cierre: Mar 14 jul · 3:30pm hora Colombia</div>
-    <div class="who-bar">
-      <label>¿Quién eres?</label>
-      <select id="psel-semi" onchange="onSemiNameSelect()">
-        <option value="">— Elige tu nombre —</option>
-      </select>
-    </div>
-    <div id="semi-form"></div>
-    <div style="padding:1.5rem 0 1rem;text-align:center">
-      <button class="save-btn" id="semi-save-btn" onclick="saveSemi()">💾 Guardar mis picks de semis</button>
-      <div class="sync-bar" id="semi-sbar"></div>
-    </div>
-    <div class="eyebrow" style="margin-top:2rem">
-      <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Pronósticos semis — todos</span>
-      <div class="eyebrow-line"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+      <div class="eyebrow" style="margin-bottom:0;flex:1">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">Picks Semifinales</span>
+        <div class="eyebrow-line"></div>
+      </div>
+      <button class="ref-btn" onclick="printPicks('semis')">⬇ PDF</button>
     </div>
     <div class="tbl-wrap" id="picks-semi-table">
       <table><thead id="thead-semi"></thead><tbody id="tbody-semi"></tbody></table>
     </div>
   </div>
 
-  <!-- RESUMEN -->
+    <!-- RESUMEN -->
   <div class="panel" id="panel-resumen">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
@@ -1484,11 +1470,11 @@ setTimeout(()=>{
 
 // ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
-  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : 'picks-qtr-res-table';
+  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : 'picks-semi-table';
   const tableEl = document.getElementById(tableId);
   if(!tableEl) return;
 
-  const title = fase==='16avos' ? 'Picks 16avos de Final' : fase==='octavos' ? 'Picks Octavos de Final' : 'Picks Cuartos de Final';
+  const title = fase==='16avos' ? 'Picks 16avos de Final' : fase==='octavos' ? 'Picks Octavos de Final' : fase==='cuartos' ? 'Picks Cuartos de Final' : 'Picks Semifinales';
   const now = new Date().toLocaleString('es-CO', {
     day:'2-digit', month:'long', year:'numeric',
     hour:'2-digit', minute:'2-digit'
