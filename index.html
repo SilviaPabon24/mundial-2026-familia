@@ -12,7 +12,7 @@
 
 // ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
-  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : 'picks-semi-table';
+  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : 'picks-semi-table-home';
   const tableEl = document.getElementById(tableId);
   if(!tableEl) return;
 
@@ -380,8 +380,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
 <div class="nav-wrap">
   <div class="nav-pill">
-    <button onclick="showPanel('ranking',this)">Ranking</button>
-    <button class="active" onclick="showPanel('picks-semi',this)">Semis</button>
+    <button class="active" onclick="showPanel('ranking',this)">Ranking</button>
     <button onclick="showPanel('resumen',this)">Resumen</button>
     <button onclick="showPanel('bracket',this)">Llaves</button>
   </div>
@@ -390,7 +389,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 <main>
 
     <!-- RANKING -->
-  <div class="panel" id="panel-ranking">
+  <div class="panel active" id="panel-ranking">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
         <div class="eyebrow-line"></div>
@@ -402,10 +401,13 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
     <div style="font-size:10px;color:var(--text3);letter-spacing:.06em;margin-bottom:1rem" id="last-updated"></div>
     <div class="podio-wrap" id="podio"></div>
 
-    <div class="eyebrow" style="margin-top:2.5rem">
-      <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Pronósticos semis — todos</span>
-      <div class="eyebrow-line"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2.5rem;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+      <div class="eyebrow" style="margin-bottom:0;flex:1">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">Pronósticos semis — todos</span>
+        <div class="eyebrow-line"></div>
+      </div>
+      <button class="ref-btn" onclick="printPicks('semis')">⬇ PDF</button>
     </div>
     <div class="tbl-wrap" style="margin-bottom:2rem" id="picks-semi-table-home">
       <table><thead id="thead-semi-home"></thead><tbody id="tbody-semi-home"></tbody></table>
@@ -419,22 +421,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
     <div class="res-list" id="resultados-list"></div>
   </div>
 
-  <!-- SEMIS -->
-  <div class="panel active" id="panel-picks-semi">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
-      <div class="eyebrow" style="margin-bottom:0;flex:1">
-        <div class="eyebrow-line"></div>
-        <span class="eyebrow-text">Picks Semifinales</span>
-        <div class="eyebrow-line"></div>
-      </div>
-      <button class="ref-btn" onclick="printPicks('semis')">⬇ PDF</button>
-    </div>
-    <div class="tbl-wrap" id="picks-semi-table">
-      <table><thead id="thead-semi"></thead><tbody id="tbody-semi"></tbody></table>
-    </div>
-  </div>
-
-    <!-- RESUMEN -->
+  <!-- RESUMEN -->
   <div class="panel" id="panel-resumen">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
@@ -1470,7 +1457,7 @@ setTimeout(()=>{
 
 // ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
-  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : 'picks-semi-table';
+  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : 'picks-semi-table-home';
   const tableEl = document.getElementById(tableId);
   if(!tableEl) return;
 
