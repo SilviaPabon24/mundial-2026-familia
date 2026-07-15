@@ -1047,8 +1047,24 @@ function buildBK(known){
       }
       return'<div class="bk-match" style="margin:24px 0">'+tbox(m.eq1,null,'')+tbox(m.eq2,null,'')+'</div>';
     }).join('');
-    const semi=Array(2).fill(0).map(function(){return'<div class="bk-match" style="margin:76px 0">'+tbd()+tbd()+'</div>';}).join('');
-    const fin='<div class="bk-match" style="margin:auto"><div style="font-size:22px;text-align:center;margin-bottom:7px">🏆</div>'+tbd()+tbd()+'</div>';
+    const semiMatches=[
+      {eq1:'France',  eq2:'Spain',     k:'France|Spain'},
+      {eq1:'England', eq2:'Argentina', k:'England|Argentina'},
+    ];
+    const semi=semiMatches.map(function(m){
+      const res=known[m.k];
+      if(res&&res.done){
+        const penW=res.pen||null;
+        const w1=res.s1>res.s2||(res.s1===res.s2&&penW===m.eq1);
+        const w2=res.s2>res.s1||(res.s1===res.s2&&penW===m.eq2);
+        return'<div class="bk-match" style="margin:76px 0">'+tbox(m.eq1,res.s1,w1?'win':w2?'lose':'')+tbox(m.eq2,res.s2,w2?'win':w1?'lose':'')+'</div>';
+      }
+      return'<div class="bk-match" style="margin:76px 0">'+tbox(m.eq1,null,'')+tbox(m.eq2,null,'')+'</div>';
+    }).join('');
+    // Final: Spain vs Argentina
+    const finTeam1 = known['France|Spain']&&known['France|Spain'].done ? (known['France|Spain'].s1<known['France|Spain'].s2?'Spain':'France') : null;
+    const finTeam2 = known['England|Argentina']&&known['England|Argentina'].done ? (known['England|Argentina'].s2>known['England|Argentina'].s1?'Argentina':'England') : null;
+    const fin='<div class="bk-match" style="margin:auto"><div style="font-size:22px;text-align:center;margin-bottom:7px">🏆</div>'+(finTeam1?tbox(finTeam1,null,''):tbd('Por definir'))+(finTeam2?tbox(finTeam2,null,''):tbd('Por definir'))+'</div>';
     document.getElementById('bracket-wrap').innerHTML=
       '<div class="bk-rounds">'+
       '<div class="bk-col" style="min-width:153px"><div class="bk-lbl">16avos · 28–30 jun</div><div class="bk-slots">'+m16.slice(0,8).join('')+'</div></div>'+
