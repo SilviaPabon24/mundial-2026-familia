@@ -12,11 +12,11 @@
 
 // ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
-  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : 'picks-semi-table-home';
+  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : fase==='semis' ? 'picks-semi-table-home' : 'picks-final-table-home';
   const tableEl = document.getElementById(tableId);
   if(!tableEl) return;
 
-  const title = fase==='16avos' ? 'Picks 16avos de Final' : fase==='octavos' ? 'Picks Octavos de Final' : fase==='cuartos' ? 'Picks Cuartos de Final' : 'Picks Semifinales';
+  const title = fase==='16avos' ? 'Picks 16avos de Final' : fase==='octavos' ? 'Picks Octavos de Final' : fase==='cuartos' ? 'Picks Cuartos de Final' : fase==='semis' ? 'Picks Semifinales' : 'Picks 3er Puesto y Final';
   const now = new Date().toLocaleString('es-CO', {
     day:'2-digit', month:'long', year:'numeric',
     hour:'2-digit', minute:'2-digit'
@@ -380,7 +380,8 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
 <div class="nav-wrap">
   <div class="nav-pill">
-    <button class="active" onclick="showPanel('ranking',this)">Ranking</button>
+    <button onclick="showPanel('ranking',this)">Ranking</button>
+    <button class="active" onclick="showPanel('picks-final',this)">3eros & Final</button>
     <button onclick="showPanel('resumen',this)">Resumen</button>
     <button onclick="showPanel('bracket',this)">Llaves</button>
   </div>
@@ -389,7 +390,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 <main>
 
     <!-- RANKING -->
-  <div class="panel active" id="panel-ranking">
+  <div class="panel" id="panel-ranking">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
         <div class="eyebrow-line"></div>
@@ -404,13 +405,13 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2.5rem;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
         <div class="eyebrow-line"></div>
-        <span class="eyebrow-text">Pronósticos semis — todos</span>
+        <span class="eyebrow-text">Pronósticos 3eros &amp; Final — todos</span>
         <div class="eyebrow-line"></div>
       </div>
-      <button class="ref-btn" onclick="printPicks('semis')">⬇ PDF</button>
+      <button class="ref-btn" onclick="printPicks('final')">⬇ PDF</button>
     </div>
-    <div class="tbl-wrap" style="margin-bottom:2rem" id="picks-semi-table-home">
-      <table><thead id="thead-semi-home"></thead><tbody id="tbody-semi-home"></tbody></table>
+    <div class="tbl-wrap" style="margin-bottom:2rem" id="picks-final-table-home">
+      <table><thead id="thead-final-home"></thead><tbody id="tbody-final-home"></tbody></table>
     </div>
 
     <div class="eyebrow" style="margin-top:1rem">
@@ -419,6 +420,38 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
       <div class="eyebrow-line"></div>
     </div>
     <div class="res-list" id="resultados-list"></div>
+  </div>
+
+  <!-- FINAL -->
+  <div class="panel active" id="panel-picks-final">
+    <div class="eyebrow">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">Picks 3er Puesto &amp; Final</span>
+      <div class="eyebrow-line"></div>
+    </div>
+    <div class="cierre-bar">⏰ Cierre registro: Sáb 18 jul · 3:30pm hora Colombia</div>
+    <div class="who-bar">
+      <label>¿Quién eres?</label>
+      <select id="psel-final" onchange="onFinalNameSelect()">
+        <option value="">— Elige tu nombre —</option>
+      </select>
+    </div>
+    <div id="final-form"></div>
+    <div style="padding:1.5rem 0 1rem;text-align:center">
+      <button class="save-btn" id="final-save-btn" onclick="saveFinal()">💾 Guardar mis picks</button>
+      <div class="sync-bar" id="final-sbar"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2rem;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+      <div class="eyebrow" style="margin-bottom:0;flex:1">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">Pronósticos 3eros &amp; Final — todos</span>
+        <div class="eyebrow-line"></div>
+      </div>
+      <button class="ref-btn" onclick="printPicks('final')">⬇ PDF</button>
+    </div>
+    <div class="tbl-wrap" id="picks-final-table">
+      <table><thead id="thead-final"></thead><tbody id="tbody-final"></tbody></table>
+    </div>
   </div>
 
   <!-- RESUMEN -->
@@ -568,9 +601,14 @@ const MS_SEMI=[
   {id:1, date:'Mar 14 jul · 4:00pm', eq1:'Francia',    eq2:'España',    flag1:'fr', flag2:'es'},
   {id:2, date:'Mié 15 jul · 3:00pm', eq1:'Inglaterra', eq2:'Argentina', flag1:'gb-eng', flag2:'ar'},
 ];
+const MS_FINAL=[
+  {id:1, date:'Sáb 18 jul · 4:00pm', eq1:'Francia',    eq2:'Inglaterra', flag1:'fr',    flag2:'gb-eng', label:'3er Puesto · Miami'},
+  {id:2, date:'Dom 19 jul · 2:00pm', eq1:'Argentina',  eq2:'España',     flag1:'ar',    flag2:'es',     label:'FINAL · Nueva Jersey'},
+];
+let RESULTS_FINAL={};
 let RESULTS_SEMI={1:{clf:'España',s1:0,s2:2,isPen:false},2:{clf:'Argentina',s1:1,s2:2,isPen:false}};
 let RESULTS_QTR={1:{clf:'Francia',s1:0,s2:2,isPen:false},2:{clf:'España',s1:2,s2:1,isPen:false},3:{clf:'Inglaterra',s1:1,s2:2,isPen:false},4:{clf:'Argentina',s1:3,s2:1,isPen:false}};
-let allData={}, allDataOct={}, allDataQtr={}, allDataSemi={}, octPicks={}, qtrPicks={}, semiPicks={};
+let allData={}, allDataOct={}, allDataQtr={}, allDataSemi={}, allDataFinal={}, octPicks={}, qtrPicks={}, semiPicks={}, finalPicks={};
 
 // ── PUNTOS ───────────────────────────────────────────────
 function calcPts(pk, res, fase){
@@ -583,9 +621,10 @@ function calcPts(pk, res, fase){
 }
 function totalPts16(p){let t=0;MS.forEach(m=>{const pts=calcPts((allData[p]||{})[m.id],RESULTS[m.id]);if(pts)t+=pts;});return t;}
 function totalPtsOct(p){let t=0;MS_OCT.forEach(m=>{const pts=calcPts((allDataOct[p]||{})[m.id],RESULTS_OCT[m.id],'oct');if(pts)t+=pts;});return t;}
+function totalPtsFinal(p){let t=0;MS_FINAL.forEach(m=>{const pts=calcPts((allDataFinal[p]||{})[m.id],RESULTS_FINAL[m.id],'oct');if(pts)t+=pts;});return t;}
 function totalPtsSemi(p){let t=0;MS_SEMI.forEach(m=>{const pts=calcPts((allDataSemi[p]||{})[m.id],RESULTS_SEMI[m.id],'oct');if(pts)t+=pts;});return t;}
 function totalPtsQtr(p){let t=0;MS_QTR.forEach(m=>{const pts=calcPts((allDataQtr[p]||{})[m.id],RESULTS_QTR[m.id],'oct');if(pts)t+=pts;});return t;}
-function totalPts(p){return totalPts16(p)+totalPtsOct(p)+totalPtsQtr(p)+totalPtsSemi(p);}
+function totalPts(p){return totalPts16(p)+totalPtsOct(p)+totalPtsQtr(p)+totalPtsSemi(p)+totalPtsFinal(p);}
 
 // ── RANKING ──────────────────────────────────────────────
 function buildRanking(){
@@ -598,7 +637,7 @@ function buildRanking(){
   const maxPts=Math.max(...ranked.map(n=>totalPts(n)),0);
 
   ranked.forEach((name,i)=>{
-    const pts=totalPts(name),pts16=totalPts16(name),ptsOct=totalPtsOct(name),ptsQtr=totalPtsQtr(name),ptsSemi=totalPtsSemi(name);
+    const pts=totalPts(name),pts16=totalPts16(name),ptsOct=totalPtsOct(name),ptsQtr=totalPtsQtr(name),ptsSemi=totalPtsSemi(name),ptsFinal=totalPtsFinal(name);
     const isHero=pts>0&&pts===maxPts;
     const np=name.split(' ');const sn=np[0]+' '+(np[1]||'');
     const samePts=ranked.filter(n=>totalPts(n)===pts).length;
@@ -618,6 +657,7 @@ function buildRanking(){
         ${ptsOct>0?`<span class="ph ph-oct">8vos: ${ptsOct}</span>`:'<span class="ph ph-pending">8vos: —</span>'}
         ${ptsQtr>0?`<span class="ph ph-oct">4tos: ${ptsQtr}</span>`:'<span class="ph ph-pending">4tos: —</span>'}
         ${ptsSemi>0?`<span class="ph ph-oct">Semi: ${ptsSemi}</span>`:'<span class="ph ph-pending">Semi: —</span>'}
+        ${ptsFinal>0?`<span class="ph ph-oct">Final: ${ptsFinal}</span>`:'<span class="ph ph-pending">Final: —</span>'}
       </div>`;
     podio.appendChild(c);
   });
@@ -915,16 +955,18 @@ function fetchWithTimeout(url, ms=6000){
 }
 async function fetchAllData(){
   try{
-    const [j16, joct, jqtr, jsemi] = await Promise.all([
+    const [j16, joct, jqtr, jsemi, jfinal] = await Promise.all([
       fetchWithTimeout(URL_GS+'?t='+Date.now()),
       fetchWithTimeout(URL_GS+'?fase=octavos&t='+Date.now()),
       fetchWithTimeout(URL_GS+'?fase=cuartos&t='+Date.now()),
-      fetchWithTimeout(URL_GS+'?fase=semis&t='+Date.now())
+      fetchWithTimeout(URL_GS+'?fase=semis&t='+Date.now()),
+      fetchWithTimeout(URL_GS+'?fase=final&t='+Date.now())
     ]);
     if(j16?.status==='ok') allData=j16.data||{};
     if(joct?.status==='ok') allDataOct=joct.data||{};
     if(jqtr?.status==='ok') allDataQtr=jqtr.data||{};
     if(jsemi?.status==='ok') allDataSemi=jsemi.data||{};
+    if(jfinal?.status==='ok') allDataFinal=jfinal.data||{};
   }catch(e){console.log('Fetch error:',e.message);}
 }
 function renderAll(){
@@ -933,6 +975,9 @@ function renderAll(){
   buildOctTablaById('thead-oct','tbody-oct');
   buildQtrTablaById('thead-qtr-res','tbody-qtr-res');
   buildSemiTabla('thead-semi-home','tbody-semi-home');
+  buildFinalTabla('thead-final-home','tbody-final-home');
+  buildFinalTabla('thead-final','tbody-final');
+  buildFinalForm();
 }
 async function refreshData(){
   renderAll();
@@ -1072,6 +1117,7 @@ function buildBK(known){
       '<div class="bk-col" style="min-width:146px"><div class="bk-lbl">Octavos · 4–7 jul</div><div class="bk-slots" style="justify-content:space-around">'+oct.join('')+'</div></div>'+
       '<div class="bk-col" style="min-width:143px"><div class="bk-lbl">Cuartos · ~9 jul</div><div class="bk-slots" style="justify-content:space-around">'+qtr+'</div></div>'+
       '<div class="bk-col" style="min-width:143px"><div class="bk-lbl">Semis · ~14 jul</div><div class="bk-slots" style="justify-content:space-around">'+semi+'</div></div>'+
+      '<div class="bk-col" style="min-width:143px"><div class="bk-lbl">3er puesto · 18 jul</div><div class="bk-slots" style="justify-content:center"><div class="bk-match" style="margin:auto">'+tbox('France',null,'')+tbox('England',null,'')+'</div></div></div>'+
       '<div class="bk-col" style="min-width:143px"><div class="bk-lbl">Final · 19 jul</div><div class="bk-slots" style="justify-content:center">'+fin+'</div></div>'+
       '</div>'+
       '<div class="bk-legend">'+
@@ -1453,6 +1499,167 @@ function buildSemiTabla(theadId,tbodyId){
   });
 }
 
+// ── FINAL FORM ───────────────────────────────────────────
+function buildFinalForm(){
+  const sel=document.getElementById('psel-final');
+  while(sel.options.length>1) sel.remove(1);
+  PARTS.forEach(n=>{
+    const yaGuardo=allDataFinal[n]&&Object.values(allDataFinal[n]).some(pk=>pk.clf&&pk.clf!=='');
+    if(!yaGuardo){const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);}
+  });
+  const form=document.getElementById('final-form');if(!form)return;form.innerHTML='';
+  MS_FINAL.forEach(m=>{
+    const d=document.createElement('div');d.className='match-card';d.id='final-mc'+m.id;
+    const f1=`<img class="team-flag" src="https://flagcdn.com/w40/${m.flag1}.png" alt="${m.eq1}">`;
+    const f2=`<img class="team-flag" src="https://flagcdn.com/w40/${m.flag2}.png" alt="${m.eq2}">`;
+    const e1=m.eq1.replace(/'/g,"\'"),e2=m.eq2.replace(/'/g,"\'");
+    d.innerHTML=`
+      <div class="match-meta">${m.label} · ${m.date}</div>
+      <div class="scoreboard">
+        <div class="team-col" id="final-tc1-${m.id}">${f1}<div class="team-name">${m.eq1}</div><input class="goal-input" type="number" id="final-s1-${m.id}" min="0" max="20" value="0" oninput="onFinalScore(${m.id})" onchange="onFinalScore(${m.id})"></div>
+        <div class="vs-center">VS</div>
+        <div class="team-col" id="final-tc2-${m.id}">${f2}<div class="team-name">${m.eq2}</div><input class="goal-input" type="number" id="final-s2-${m.id}" min="0" max="20" value="0" oninput="onFinalScore(${m.id})" onchange="onFinalScore(${m.id})"></div>
+      </div>
+      <div class="pen-banner" id="final-pen-${m.id}">
+        <div class="pen-title">🥅 Empate — ¿quién gana en penales?</div>
+        <div class="pen-btns">
+          <button class="pen-btn" id="final-pb1-${m.id}" onclick="setFinalPen(${m.id},1,'${e1}')">${f1} ${m.eq1}</button>
+          <button class="pen-btn" id="final-pb2-${m.id}" onclick="setFinalPen(${m.id},2,'${e2}')">${f2} ${m.eq2}</button>
+        </div>
+      </div>`;
+    form.appendChild(d);
+  });
+  setTimeout(()=>setFinalInputsDisabled(true),50);
+}
+
+function setFinalInputsDisabled(disabled){
+  MS_FINAL.forEach(m=>{
+    ['final-s1-','final-s2-','final-pb1-','final-pb2-'].forEach(pre=>{
+      const el=document.getElementById(pre+m.id);if(el)el.disabled=disabled;
+    });
+  });
+  const btn=document.getElementById('final-save-btn');if(btn)btn.disabled=disabled;
+}
+
+function onFinalNameSelect(){
+  const me=document.getElementById('psel-final').value;
+  finalPicks={};
+  if(!me){setFinalInputsDisabled(true);return;}
+  setFinalInputsDisabled(false);
+  loadFinalPicks();
+}
+
+function onFinalScore(id){
+  const v1=parseInt(document.getElementById('final-s1-'+id).value)||0;
+  const v2=parseInt(document.getElementById('final-s2-'+id).value)||0;
+  if(!finalPicks[id])finalPicks[id]={};
+  finalPicks[id].s1=v1;finalPicks[id].s2=v2;finalPicks[id].score=v1+'-'+v2;
+  const tc1=document.getElementById('final-tc1-'+id),tc2=document.getElementById('final-tc2-'+id);
+  const pen=document.getElementById('final-pen-'+id),mc=document.getElementById('final-mc'+id);
+  tc1.classList.remove('winner','winner-pen');tc2.classList.remove('winner','winner-pen');
+  if(v1===v2){
+    pen.classList.add('show');mc.className='match-card draw';
+    const clf=finalPicks[id]?.clf;
+    const m=MS_FINAL.find(x=>x.id===id);
+    if(clf&&m){if(clf===m.eq1)tc1.classList.add('winner-pen');else tc2.classList.add('winner-pen');}
+  }else{
+    pen.classList.remove('show');
+    document.getElementById('final-pb1-'+id).classList.remove('sel');
+    document.getElementById('final-pb2-'+id).classList.remove('sel');
+    const m=MS_FINAL.find(x=>x.id===id);
+    if(v1>v2){finalPicks[id].clf=m.eq1;tc1.classList.add('winner');mc.className='match-card done';}
+    else{finalPicks[id].clf=m.eq2;tc2.classList.add('winner');mc.className='match-card done';}
+  }
+}
+
+function setFinalPen(id,side,name){
+  if(!finalPicks[id])finalPicks[id]={s1:0,s2:0,score:'0-0'};
+  finalPicks[id].clf=name;
+  document.getElementById('final-pb1-'+id).classList.toggle('sel',side===1);
+  document.getElementById('final-pb2-'+id).classList.toggle('sel',side===2);
+  const tc1=document.getElementById('final-tc1-'+id),tc2=document.getElementById('final-tc2-'+id);
+  tc1.classList.remove('winner-pen');tc2.classList.remove('winner-pen');
+  (side===1?tc1:tc2).classList.add('winner-pen');
+  document.getElementById('final-mc'+id).className='match-card draw';
+}
+
+function loadFinalPicks(){
+  const me=document.getElementById('psel-final').value;
+  finalPicks={};
+  if(!me)return;
+  const ex=allDataFinal[me]||{};
+  MS_FINAL.forEach(m=>{
+    const p=ex[m.id]||{};
+    finalPicks[m.id]={clf:p.clf||'',s1:parseInt(p.s1??0),s2:parseInt(p.s2??0),score:p.score||'0-0'};
+    const lp=finalPicks[m.id];
+    const s1el=document.getElementById('final-s1-'+m.id),s2el=document.getElementById('final-s2-'+m.id);
+    if(s1el)s1el.value=lp.s1;if(s2el)s2el.value=lp.s2;
+    const tc1=document.getElementById('final-tc1-'+m.id),tc2=document.getElementById('final-tc2-'+m.id);
+    const pen=document.getElementById('final-pen-'+m.id);
+    tc1.classList.remove('winner','winner-pen');tc2.classList.remove('winner','winner-pen');
+    pen.classList.remove('show');
+    document.getElementById('final-pb1-'+m.id).classList.remove('sel');
+    document.getElementById('final-pb2-'+m.id).classList.remove('sel');
+    document.getElementById('final-mc'+m.id).className='match-card';
+    if(!lp.clf)return;
+    if(lp.s1===lp.s2){
+      pen.classList.add('show');document.getElementById('final-mc'+m.id).className='match-card draw';
+      if(lp.clf===m.eq1){tc1.classList.add('winner-pen');document.getElementById('final-pb1-'+m.id).classList.add('sel');}
+      else{tc2.classList.add('winner-pen');document.getElementById('final-pb2-'+m.id).classList.add('sel');}
+    }else{
+      document.getElementById('final-mc'+m.id).className='match-card done';
+      if(lp.clf===m.eq1)tc1.classList.add('winner');else tc2.classList.add('winner');
+    }
+  });
+}
+
+async function saveFinal(){
+  const me=document.getElementById('psel-final').value;
+  if(!me){alert('Selecciona tu nombre primero');return;}
+  MS_FINAL.forEach(m=>{
+    const v1=parseInt(document.getElementById('final-s1-'+m.id).value)||0;
+    const v2=parseInt(document.getElementById('final-s2-'+m.id).value)||0;
+    if(!finalPicks[m.id])finalPicks[m.id]={};
+    finalPicks[m.id].s1=v1;finalPicks[m.id].s2=v2;finalPicks[m.id].score=v1+'-'+v2;
+  });
+  const btn=document.getElementById('final-save-btn');
+  btn.disabled=true;btn.textContent='Guardando...';
+  setSbar('final-sbar','spin','Enviando...');
+  try{
+    const r=await fetch(URL_GS,{method:'POST',body:JSON.stringify({participant:me,picks:finalPicks,fase:'final'})});
+    const j=await r.json();
+    if(j.status==='ok'){setSbar('final-sbar','ok','Guardado! ✓');await fetchAllData();renderAll();}
+    else throw new Error(j.message);
+  }catch(e){setSbar('final-sbar','err','Error al guardar');}
+  finally{btn.disabled=false;btn.textContent='Guardar mis picks';}
+}
+
+function buildFinalTabla(theadId,tbodyId){
+  const sn=n=>{const p=n.split(' ');return p[0].length>7?p[0]:p[0]+' '+p[1]?.charAt(0)+'.'};
+  const thead=document.getElementById(theadId),tb=document.getElementById(tbodyId);
+  if(!thead||!tb)return;
+  thead.innerHTML=`<tr><th class="col-p">Partido</th>${PARTS.map(p=>`<th>${sn(p)}</th>`).join('')}</tr>`;
+  tb.innerHTML='';
+  MS_FINAL.forEach(m=>{
+    const res=RESULTS_FINAL[m.id];
+    const tr=document.createElement('tr');
+    const pc=`<td class="col-p"><span class="pname">${m.label}</span><div class="pdate">${m.date}${res?' · <span style="color:var(--am);font-weight:600">'+res.clf+' '+res.s1+'-'+res.s2+'</span>':''}</div></td>`;
+    const cells=PARTS.map(p=>{
+      const pk=(allDataFinal[p]||{})[m.id];
+      if(!pk?.clf)return`<td><div class="pick-empty">—</div></td>`;
+      const pts=calcPts(pk,res,'oct');
+      const hasS=pk.s1!==null&&pk.s2!==null;
+      const s1n=hasS?Number(pk.s1):null,s2n=hasS?Number(pk.s2):null;
+      const isPen=pk.isPen===true||(hasS&&s1n===s2n);
+      const sc=hasS?`${s1n} - ${s2n}`:'';
+      const wrong=pts===0;
+      const badge=pts===6?'<div><span class="badge b4">+6</span></div>':pts===3?'<div><span class="badge b2">+3</span></div>':pts===0&&res?'<div><span class="badge b0">X</span></div>':'';
+      return`<td><div class="pick-clf${isPen?' pen':''}${wrong?' wrong':''}">${pk.clf}</div><div class="pick-score${wrong?' wrong':''}">${sc}</div>${isPen?'<div class="pick-pen">penales</div>':''}${badge}</td>`;
+    }).join('');
+    tr.innerHTML=pc+cells;tb.appendChild(tr);
+  });
+}
+
 // ── INIT ─────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', ()=>{
   renderAll();
@@ -1474,11 +1681,11 @@ setTimeout(()=>{
 
 // ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
-  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : 'picks-semi-table-home';
+  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : fase==='semis' ? 'picks-semi-table-home' : 'picks-final-table-home';
   const tableEl = document.getElementById(tableId);
   if(!tableEl) return;
 
-  const title = fase==='16avos' ? 'Picks 16avos de Final' : fase==='octavos' ? 'Picks Octavos de Final' : fase==='cuartos' ? 'Picks Cuartos de Final' : 'Picks Semifinales';
+  const title = fase==='16avos' ? 'Picks 16avos de Final' : fase==='octavos' ? 'Picks Octavos de Final' : fase==='cuartos' ? 'Picks Cuartos de Final' : fase==='semis' ? 'Picks Semifinales' : 'Picks 3er Puesto y Final';
   const now = new Date().toLocaleString('es-CO', {
     day:'2-digit', month:'long', year:'numeric',
     hour:'2-digit', minute:'2-digit'
