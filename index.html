@@ -1643,7 +1643,7 @@ function buildFinalTabla(theadId,tbodyId){
   MS_FINAL.forEach(m=>{
     const res=RESULTS_FINAL[m.id];
     const tr=document.createElement('tr');
-    const pc=`<td class="col-p"><span class="pname">${m.label}</span><div class="pdate">${m.date}${res?' · <span style="color:var(--am);font-weight:600">'+res.clf+' '+res.s1+'-'+res.s2+'</span>':''}</div></td>`;
+    const pc=`<td class="col-p"><span class="pname">${m.eq1} vs ${m.eq2}</span><div class="pdate">${m.label} · ${m.date}${res?' · <span style="color:var(--am);font-weight:600">'+res.clf+' '+res.s1+'-'+res.s2+'</span>':''}</div></td>`;
     const cells=PARTS.map(p=>{
       const pk=(allDataFinal[p]||{})[m.id];
       if(!pk?.clf)return`<td><div class="pick-empty">—</div></td>`;
