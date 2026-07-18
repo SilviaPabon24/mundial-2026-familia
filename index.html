@@ -1634,14 +1634,8 @@ function buildFinalTabla(theadId,tbodyId){
 // ── INIT ─────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', ()=>{
   renderAll();
-  // Show loading indicator in selector
-  const sel=document.getElementById('psel-qtr');
-  if(sel){const o=document.createElement('option');o.value='';o.textContent='Cargando...';o.disabled=true;sel.appendChild(o);}
-  fetchAllData().then(()=>{
-    // Remove loading option and rebuild
-    if(sel){while(sel.options.length>1)sel.remove(1);}
-    renderAll();
-  });
+  fetchAllData().then(()=>renderAll());
+});
 });
 // Pre-render bracket
 setTimeout(()=>{
