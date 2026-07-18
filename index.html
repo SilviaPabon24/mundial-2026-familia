@@ -380,8 +380,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
 <div class="nav-wrap">
   <div class="nav-pill">
-    <button onclick="showPanel('ranking',this)">Ranking</button>
-    <button class="active" onclick="showPanel('picks-final',this)">3eros & Final</button>
+    <button class="active" onclick="showPanel('ranking',this)">Ranking</button>
     <button onclick="showPanel('resumen',this)">Resumen</button>
     <button onclick="showPanel('bracket',this)">Llaves</button>
   </div>
@@ -601,9 +600,8 @@ function totalPts(p){return totalPts16(p)+totalPtsOct(p)+totalPtsQtr(p)+totalPts
 
 // ── RANKING ──────────────────────────────────────────────
 function buildRanking(){
-  const lastMatch='Semis completas: Espana 2-0 Francia | Argentina 2-1 Inglaterra | Final: Argentina vs Espana';
   const el=document.getElementById('last-updated');
-  if(el) el.textContent='Puntos actualizados con: '+lastMatch;
+  if(el) el.style.display='none';
 
   const ranked=[...PARTS].sort((a,b)=>totalPts(b)-totalPts(a));
   const podio=document.getElementById('podio');podio.innerHTML='';
@@ -950,7 +948,6 @@ function renderAll(){
   buildSemiTabla('thead-semi-home','tbody-semi-home');
   buildFinalTabla('thead-final-home','tbody-final-home');
   buildFinalTabla('thead-final-home2','tbody-final-home2');
-  buildFinalTabla('thead-final','tbody-final');
 }
 async function refreshData(){
   renderAll();
