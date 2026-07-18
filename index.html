@@ -390,7 +390,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 <main>
 
     <!-- RANKING -->
-  <div class="panel" id="panel-ranking">
+  <div class="panel active" id="panel-ranking">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
         <div class="eyebrow-line"></div>
@@ -414,43 +414,16 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
       <table><thead id="thead-final-home"></thead><tbody id="tbody-final-home"></tbody></table>
     </div>
 
-    <div class="eyebrow" style="margin-top:1rem">
-      <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Resultados oficiales</span>
-      <div class="eyebrow-line"></div>
-    </div>
-    <div class="res-list" id="resultados-list"></div>
-  </div>
-
-  <!-- FINAL -->
-  <div class="panel active" id="panel-picks-final">
-    <div class="eyebrow">
-      <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Picks 3er Puesto &amp; Final</span>
-      <div class="eyebrow-line"></div>
-    </div>
-    <div class="cierre-bar">⏰ Cierre registro: Sáb 18 jul · 3:30pm hora Colombia</div>
-    <div class="who-bar">
-      <label>¿Quién eres?</label>
-      <select id="psel-final" onchange="onFinalNameSelect()">
-        <option value="">— Elige tu nombre —</option>
-      </select>
-    </div>
-    <div id="final-form"></div>
-    <div style="padding:1.5rem 0 1rem;text-align:center">
-      <button class="save-btn" id="final-save-btn" onclick="saveFinal()">💾 Guardar mis picks</button>
-      <div class="sync-bar" id="final-sbar"></div>
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2rem;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2.5rem;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
       <div class="eyebrow" style="margin-bottom:0;flex:1">
         <div class="eyebrow-line"></div>
-        <span class="eyebrow-text">Pronósticos 3eros &amp; Final — todos</span>
+        <span class="eyebrow-text">Pronósticos 3er Puesto &amp; Final — todos</span>
         <div class="eyebrow-line"></div>
       </div>
       <button class="ref-btn" onclick="printPicks('final')">⬇ PDF</button>
     </div>
-    <div class="tbl-wrap" id="picks-final-table">
-      <table><thead id="thead-final"></thead><tbody id="tbody-final"></tbody></table>
+    <div class="tbl-wrap" style="margin-bottom:2rem" id="picks-final-table-home2">
+      <table><thead id="thead-final-home2"></thead><tbody id="tbody-final-home2"></tbody></table>
     </div>
   </div>
 
@@ -605,7 +578,7 @@ const MS_FINAL=[
   {id:1, date:'Sáb 18 jul · 4:00pm', eq1:'Francia',    eq2:'Inglaterra', flag1:'fr',    flag2:'gb-eng', label:'3er Puesto · Miami'},
   {id:2, date:'Dom 19 jul · 2:00pm', eq1:'Argentina',  eq2:'España',     flag1:'ar',    flag2:'es',     label:'FINAL · Nueva Jersey'},
 ];
-let RESULTS_FINAL={};
+let RESULTS_FINAL={1:{clf:'Inglaterra',s1:4,s2:6,isPen:false}};
 let RESULTS_SEMI={1:{clf:'España',s1:0,s2:2,isPen:false},2:{clf:'Argentina',s1:1,s2:2,isPen:false}};
 let RESULTS_QTR={1:{clf:'Francia',s1:0,s2:2,isPen:false},2:{clf:'España',s1:2,s2:1,isPen:false},3:{clf:'Inglaterra',s1:1,s2:2,isPen:false},4:{clf:'Argentina',s1:3,s2:1,isPen:false}};
 let allData={}, allDataOct={}, allDataQtr={}, allDataSemi={}, allDataFinal={}, octPicks={}, qtrPicks={}, semiPicks={}, finalPicks={};
@@ -976,8 +949,8 @@ function renderAll(){
   buildQtrTablaById('thead-qtr-res','tbody-qtr-res');
   buildSemiTabla('thead-semi-home','tbody-semi-home');
   buildFinalTabla('thead-final-home','tbody-final-home');
+  buildFinalTabla('thead-final-home2','tbody-final-home2');
   buildFinalTabla('thead-final','tbody-final');
-  buildFinalForm();
 }
 async function refreshData(){
   renderAll();
@@ -1034,7 +1007,9 @@ const KNOWN={
   'Argentina|Switzerland':         {s1:3,s2:1,done:true},
   'France|Spain':                  {s1:0,s2:2,done:true},
   'England|Argentina':             {s1:1,s2:2,done:true},
+  'France|England':                {s1:4,s2:6,done:true},
   'England|Argentina':             {s1:1,s2:2,done:true},
+  'France|England':                {s1:4,s2:6,done:true},
 };
 
 function tbox(name,score,status){
