@@ -614,15 +614,15 @@ let allData={}, allDataOct={}, allDataQtr={}, allDataSemi={}, allDataFinal={}, o
 // ── PUNTOS ───────────────────────────────────────────────
 function calcPts(pk, res, fase){
   if(!pk||!res||!pk.clf||!res.clf) return null;
-  const pts_clf = fase==='oct' ? 3 : 2;
-  const pts_exact = fase==='oct' ? 9 : 4;
+  const pts_clf = (fase==='oct'||fase==='final') ? 3 : 2;
+  const pts_exact = fase==='final' ? 9 : fase==='oct' ? 6 : 4;
   if(pk.clf!==res.clf) return 0;
   if(res.isPen) return(pk.s1===res.s1&&pk.s2===res.s2&&pk.isPen)?pts_exact:pts_clf;
   return(pk.s1===res.s1&&pk.s2===res.s2&&!pk.isPen)?pts_exact:pts_clf;
 }
 function totalPts16(p){let t=0;MS.forEach(m=>{const pts=calcPts((allData[p]||{})[m.id],RESULTS[m.id]);if(pts)t+=pts;});return t;}
 function totalPtsOct(p){let t=0;MS_OCT.forEach(m=>{const pts=calcPts((allDataOct[p]||{})[m.id],RESULTS_OCT[m.id],'oct');if(pts)t+=pts;});return t;}
-function totalPtsFinal(p){let t=0;MS_FINAL.forEach(m=>{const pts=calcPts((allDataFinal[p]||{})[m.id],RESULTS_FINAL[m.id],'oct');if(pts)t+=pts;});return t;}
+function totalPtsFinal(p){let t=0;MS_FINAL.forEach(m=>{const f=m.id===2?'final':'oct';const pts=calcPts((allDataFinal[p]||{})[m.id],RESULTS_FINAL[m.id],f);if(pts)t+=pts;});return t;}
 function totalPtsSemi(p){let t=0;MS_SEMI.forEach(m=>{const pts=calcPts((allDataSemi[p]||{})[m.id],RESULTS_SEMI[m.id],'oct');if(pts)t+=pts;});return t;}
 function totalPtsQtr(p){let t=0;MS_QTR.forEach(m=>{const pts=calcPts((allDataQtr[p]||{})[m.id],RESULTS_QTR[m.id],'oct');if(pts)t+=pts;});return t;}
 function totalPts(p){return totalPts16(p)+totalPtsOct(p)+totalPtsQtr(p)+totalPtsSemi(p)+totalPtsFinal(p);}
@@ -1654,7 +1654,7 @@ function buildFinalTabla(theadId,tbodyId){
       const isPen=pk.isPen===true||(hasS&&s1n===s2n);
       const sc=hasS?`${s1n} - ${s2n}`:'';
       const wrong=pts===0;
-      const badge=pts===6?'<div><span class="badge b4">+6</span></div>':pts===3?'<div><span class="badge b2">+3</span></div>':pts===0&&res?'<div><span class="badge b0">X</span></div>':'';
+      const badge=pts===9?'<div><span class="badge b4">+9</span></div>':pts===6?'<div><span class="badge b4">+6</span></div>':pts===3?'<div><span class="badge b2">+3</span></div>':pts===0&&res?'<div><span class="badge b0">✗</span></div>':'';
       return`<td><div class="pick-clf${isPen?' pen':''}${wrong?' wrong':''}">${pk.clf}</div><div class="pick-score${wrong?' wrong':''}">${sc}</div>${isPen?'<div class="pick-pen">penales</div>':''}${badge}</td>`;
     }).join('');
     tr.innerHTML=pc+cells;tb.appendChild(tr);
