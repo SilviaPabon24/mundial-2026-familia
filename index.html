@@ -685,7 +685,7 @@ function buildTabla16(theadId,tbodyId){
 
 // ── RESULTADOS ───────────────────────────────────────────
 function buildResultados(){
-  const rl=document.getElementById('resultados-list');rl.innerHTML='';
+  const rl=document.getElementById('resultados-list');if(!rl)return;rl.innerHTML='';
   MS.forEach(m=>{
     const res=RESULTS[m.id];
     const d=document.createElement('div');
