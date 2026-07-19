@@ -286,9 +286,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
       </div>
       <button class="ref-btn" onclick="printPicks('final')">⬇ PDF</button>
     </div>
-    <div class="tbl-wrap" style="margin-bottom:2rem" id="picks-final-table-home2">
-      <table><thead id="thead-final-home2"></thead><tbody id="tbody-final-home2"></tbody></table>
-    </div>
+
   </div>
 
   <!-- RESUMEN -->
@@ -975,7 +973,6 @@ function renderAll(){
   buildQtrTablaById('thead-qtr-res','tbody-qtr-res');
   buildSemiTabla('thead-semi-res','tbody-semi-res');
   buildFinalTabla('thead-final-home','tbody-final-home');
-  buildFinalTabla('thead-final-home2','tbody-final-home2');
   buildFinalTabla('thead-final-res','tbody-final-res');
 }
 async function refreshData(){
@@ -1648,7 +1645,8 @@ function buildFinalTabla(theadId,tbodyId){
     const cells=PARTS.map(p=>{
       const pk=(allDataFinal[p]||{})[m.id];
       if(!pk?.clf)return`<td><div class="pick-empty">—</div></td>`;
-      const pts=calcPts(pk,res,'oct');
+      const fase_m=m.id===2?'final':'oct';
+      const pts=calcPts(pk,res,fase_m);
       const hasS=pk.s1!==null&&pk.s2!==null;
       const s1n=hasS?Number(pk.s1):null,s2n=hasS?Number(pk.s2):null;
       const isPen=pk.isPen===true||(hasS&&s1n===s2n);
