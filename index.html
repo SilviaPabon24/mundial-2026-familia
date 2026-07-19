@@ -615,7 +615,7 @@ let allData={}, allDataOct={}, allDataQtr={}, allDataSemi={}, allDataFinal={}, o
 function calcPts(pk, res, fase){
   if(!pk||!res||!pk.clf||!res.clf) return null;
   const pts_clf = fase==='oct' ? 3 : 2;
-  const pts_exact = fase==='oct' ? 6 : 4;
+  const pts_exact = fase==='oct' ? 9 : 4;
   if(pk.clf!==res.clf) return 0;
   if(res.isPen) return(pk.s1===res.s1&&pk.s2===res.s2&&pk.isPen)?pts_exact:pts_clf;
   return(pk.s1===res.s1&&pk.s2===res.s2&&!pk.isPen)?pts_exact:pts_clf;
