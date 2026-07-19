@@ -32,6 +32,7 @@
 }
 html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
 ::-webkit-scrollbar{width:5px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border3);border-radius:3px}
@@ -120,7 +121,8 @@ main{position:relative;z-index:1;max-width:940px;margin:0 auto;padding:1.75rem 1
 .ref-btn:hover{color:var(--text);border-color:var(--border3);background:rgba(255,255,255,.08)}
 .ref-btn:active{transform:scale(.95)}
 .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r);border:1px solid var(--border);background:var(--card)}
-.tbl-wrap::-webkit-scrollbar{height:4px}
+.tbl-wrap
+::-webkit-scrollbar{height:4px}
 .tbl-wrap::-webkit-scrollbar-thumb{background:var(--border3);border-radius:2px}
 table{width:100%;border-collapse:collapse;font-size:11px;min-width:720px}
 thead th{padding:10px 10px;font-size:9px;font-weight:600;color:rgba(252,209,22,.7);background:rgba(255,255,255,.025);border-bottom:1px solid var(--border2);white-space:nowrap;text-align:center;letter-spacing:.1em;text-transform:uppercase}
@@ -186,7 +188,8 @@ tbody tr:hover td.col-p{background:rgba(14,22,44,.98)}
 
 /* BRACKET */
 .bk-outer{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.75rem}
-.bk-outer::-webkit-scrollbar{height:4px}
+.bk-outer
+::-webkit-scrollbar{height:4px}
 .bk-outer::-webkit-scrollbar-thumb{background:var(--border3);border-radius:2px}
 .bk-rounds{display:flex;gap:5px;min-width:1040px;align-items:flex-start}
 .bk-col{display:flex;flex-direction:column;min-width:150px}
@@ -260,6 +263,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
       <button class="ref-btn" onclick="refreshData()">↻ Actualizar</button>
     </div>
     <div style="font-size:10px;color:var(--text3);letter-spacing:.06em;margin-bottom:1rem" id="last-updated"></div>
+
     <div class="podio-wrap" id="podio"></div>
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2.5rem;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
@@ -326,8 +330,31 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
       </div>
       <button class="ref-btn" onclick="printPicks('cuartos')">⬇ PDF</button>
     </div>
-    <div class="tbl-wrap" id="picks-qtr-res-table">
+    <div class="tbl-wrap" id="picks-qtr-res-table" style="margin-bottom:2.5rem">
       <table><thead id="thead-qtr-res"></thead><tbody id="tbody-qtr-res"></tbody></table>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+      <div class="eyebrow" style="margin-bottom:0;flex:1">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">Semifinales</span>
+        <div class="eyebrow-line"></div>
+      </div>
+    </div>
+    <div class="tbl-wrap" id="picks-semi-res-table" style="margin-bottom:2.5rem">
+      <table><thead id="thead-semi-res"></thead><tbody id="tbody-semi-res"></tbody></table>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+      <div class="eyebrow" style="margin-bottom:0;flex:1">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">3er Puesto &amp; Final</span>
+        <div class="eyebrow-line"></div>
+      </div>
+      <button class="ref-btn" onclick="printPicks('final')">⬇ PDF</button>
+    </div>
+    <div class="tbl-wrap" id="picks-final-res-table">
+      <table><thead id="thead-final-res"></thead><tbody id="tbody-final-res"></tbody></table>
     </div>
   </div>
 
@@ -359,7 +386,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 1rem 3rem;bord
 
 // ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
-  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : fase==='semis' ? 'picks-semi-table-home' : 'picks-final-table-home';
+  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : fase==='semis' ? 'picks-semi-res-table' : 'picks-final-res-table';
   const tableEl = document.getElementById(tableId);
   if(!tableEl) return;
 
@@ -579,7 +606,7 @@ const MS_FINAL=[
   {id:1, date:'Sáb 18 jul · 4:00pm', eq1:'Francia',    eq2:'Inglaterra', flag1:'fr',    flag2:'gb-eng', label:'3er Puesto · Miami'},
   {id:2, date:'Dom 19 jul · 2:00pm', eq1:'Argentina',  eq2:'España',     flag1:'ar',    flag2:'es',     label:'FINAL · Nueva Jersey'},
 ];
-let RESULTS_FINAL={1:{clf:'Inglaterra',s1:4,s2:6,isPen:false}};
+let RESULTS_FINAL={1:{clf:'Inglaterra',s1:4,s2:6,isPen:false},2:{clf:'España',s1:0,s2:1,isPen:false}};
 let RESULTS_SEMI={1:{clf:'España',s1:0,s2:2,isPen:false},2:{clf:'Argentina',s1:1,s2:2,isPen:false}};
 let RESULTS_QTR={1:{clf:'Francia',s1:0,s2:2,isPen:false},2:{clf:'España',s1:2,s2:1,isPen:false},3:{clf:'Inglaterra',s1:1,s2:2,isPen:false},4:{clf:'Argentina',s1:3,s2:1,isPen:false}};
 let allData={}, allDataOct={}, allDataQtr={}, allDataSemi={}, allDataFinal={}, octPicks={}, qtrPicks={}, semiPicks={}, finalPicks={};
@@ -612,7 +639,7 @@ function buildRanking(){
   ranked.forEach((name,i)=>{
     const pts=totalPts(name),pts16=totalPts16(name),ptsOct=totalPtsOct(name),ptsQtr=totalPtsQtr(name),ptsSemi=totalPtsSemi(name),ptsFinal=totalPtsFinal(name);
     const isHero=pts>0&&pts===maxPts;
-    const np=name.split(' ');const sn=np[0]+' '+(np[1]||'');
+    const np=name.split(' ');const sn=(i===0?'🏆 ':'')+np[0]+' '+(np[1]||'');
     const samePts=ranked.filter(n=>totalPts(n)===pts).length;
     const medal=pts>0&&samePts===1?(i===0?'01':i===1?'02':i===2?'03':String(i+1).padStart(2,'0')):'';
     const c=document.createElement('div');
@@ -946,8 +973,10 @@ function renderAll(){
   buildTabla16('thead16b','tbody16b');
   buildOctTablaById('thead-oct','tbody-oct');
   buildQtrTablaById('thead-qtr-res','tbody-qtr-res');
+  buildSemiTabla('thead-semi-res','tbody-semi-res');
   buildFinalTabla('thead-final-home','tbody-final-home');
   buildFinalTabla('thead-final-home2','tbody-final-home2');
+  buildFinalTabla('thead-final-res','tbody-final-res');
 }
 async function refreshData(){
   renderAll();
@@ -1005,8 +1034,10 @@ const KNOWN={
   'France|Spain':                  {s1:0,s2:2,done:true},
   'England|Argentina':             {s1:1,s2:2,done:true},
   'France|England':                {s1:4,s2:6,done:true},
+  'Argentina|Spain':               {s1:0,s2:1,done:true},
   'England|Argentina':             {s1:1,s2:2,done:true},
   'France|England':                {s1:4,s2:6,done:true},
+  'Argentina|Spain':               {s1:0,s2:1,done:true},
 };
 
 function tbox(name,score,status){
@@ -1078,10 +1109,8 @@ function buildBK(known){
       }
       return'<div class="bk-match" style="margin:76px 0">'+tbox(m.eq1,null,'')+tbox(m.eq2,null,'')+'</div>';
     }).join('');
-    // Final: Spain vs Argentina
-    const finTeam1 = known['France|Spain']&&known['France|Spain'].done ? (known['France|Spain'].s1<known['France|Spain'].s2?'Spain':'France') : null;
-    const finTeam2 = known['England|Argentina']&&known['England|Argentina'].done ? (known['England|Argentina'].s2>known['England|Argentina'].s1?'Argentina':'England') : null;
-    const fin='<div class="bk-match" style="margin:auto"><div style="font-size:22px;text-align:center;margin-bottom:7px">🏆</div>'+(finTeam1?tbox(finTeam1,null,''):tbd('Por definir'))+(finTeam2?tbox(finTeam2,null,''):tbd('Por definir'))+'</div>';
+    const finRes = known['Argentina|Spain'];
+    const fin='<div class="bk-match" style="margin:auto"><div style="font-size:22px;text-align:center;margin-bottom:7px">🏆</div>'+(finRes&&finRes.done ? tbox('Argentina',finRes.s1,finRes.s1<finRes.s2?'lose':'win')+tbox('Spain',finRes.s2,finRes.s2>finRes.s1?'win':'lose') : tbd('Por definir')+tbd('Por definir'))+'</div>';
     document.getElementById('bracket-wrap').innerHTML=
       '<div class="bk-rounds">'+
       '<div class="bk-col" style="min-width:153px"><div class="bk-lbl">16avos · 28–30 jun</div><div class="bk-slots">'+m16.slice(0,8).join('')+'</div></div>'+
@@ -1646,7 +1675,7 @@ setTimeout(()=>{
 
 // ── PRINT PDF ─────────────────────────────────────────
 function printPicks(fase){
-  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : fase==='semis' ? 'picks-semi-table-home' : 'picks-final-table-home';
+  const tableId = fase==='16avos' ? 'picks16-table' : fase==='octavos' ? 'picks-oct-table' : fase==='cuartos' ? 'picks-qtr-res-table' : fase==='semis' ? 'picks-semi-res-table' : 'picks-final-res-table';
   const tableEl = document.getElementById(tableId);
   if(!tableEl) return;
 
